@@ -1,1 +1,20 @@
 /* You can add global styles to this file, and also import other style files */
+@font-face {
+  font-family: 'Roboto Condensed';
+  src: url('assets/fonts/Roboto_Condensed-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+}
+
+body {
+  font-family: 'Roboto Condensed', sans-serif;
+}
+
+:root {
+  --bs-font-sans-serif: 'Roboto Condensed', sans-serif;
+}
+
+body {
+  font-family: var(--bs-font-sans-serif);
+}
+

@@ -1,6 +1,13 @@
 <app-navbar></app-navbar>
-<div class="container mt-4">
-  <router-outlet></router-outlet>
+
+<div class="main-container d-flex">
+  <app-sidebar></app-sidebar>
+
+  <div class="content flex-grow-1 p-4">
+    <router-outlet></router-outlet>
+  </div>
 </div>
 
 <app-footer></app-footer>
+
+

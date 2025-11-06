@@ -1,12 +1,16 @@
 import { Component } from '@angular/core';
-import { NavbarComponent } from '../../shared/components/navbar/navbar.component';
-import { FooterComponent } from '../../shared/components/footer/footer.component';
+import { CommonModule } from '@angular/common';
+import { RouterOutlet } from '@angular/router';
+import { SidebarComponent } from '../../shared/components/sidebar/sidebar';
+import { NavbarComponent } from '../../shared/components/navbar/navbar';
+import { FooterComponent } from '../../shared/components/footer/footer';
 
 @Component({
   selector: 'app-mainlayout',
-  imports: [NavbarComponent, FooterComponent],
+  standalone: true,
+  imports: [NavbarComponent, FooterComponent, SidebarComponent, RouterOutlet, CommonModule],
   templateUrl: './mainlayout.html',
-  styleUrl: './mainlayout.css'
+  styleUrls: ['./mainlayout.css']
 })
 export class MainLayout {
   

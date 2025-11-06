@@ -1,0 +1,41 @@
+<!-- Sidebar como offcanvas en móviles -->
+<div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasSidebar" aria-labelledby="offcanvasSidebarLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasSidebarLabel">Menú</h5>
+    <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body p-0">
+    <ul class="nav flex-column">
+      <li class="nav-item">
+        <a routerLink="/" class="nav-link active"><i class="bi bi-house-door me-2"></i> Inicio</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/listas" class="nav-link"><i class="bi bi-bag-check me-2"></i> Mis listas</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/comparador" class="nav-link"><i class="bi bi-bar-chart me-2"></i> Comparador</a>
+      </li>
+      <li class="nav-item">
+        <a routerLink="/perfil" class="nav-link"><i class="bi bi-person-circle me-2"></i> Perfil</a>
+      </li>
+    </ul>
+  </div>
+</div>
+
+<!-- Sidebar fijo solo visible en pantallas grandes -->
+<div class="sidebar d-none d-lg-block bg-light p-3 border-end">
+  <ul class="nav flex-column">
+    <li class="nav-item">
+      <a routerLink="/" class="nav-link active"><i class="bi bi-house-door me-2"></i> Inicio</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/listas" class="nav-link"><i class="bi bi-bag-check me-2"></i> Mis listas</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/comparador" class="nav-link"><i class="bi bi-bar-chart me-2"></i> Comparador</a>
+    </li>
+    <li class="nav-item">
+      <a routerLink="/perfil" class="nav-link"><i class="bi bi-person-circle me-2"></i> Perfil</a>
+    </li>
+  </ul>
+</div>

@@ -1,0 +1,6 @@
+@media (min-width: 992px) {
+  .main-content {
+    margin-left: 250px; /* ancho del sidebar */
+  }
+}
+
