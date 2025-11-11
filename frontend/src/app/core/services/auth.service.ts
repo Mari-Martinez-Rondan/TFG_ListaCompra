@@ -23,4 +23,13 @@ export class AuthService {
       })
     );
   }
-}
+  
+  register(data: { usuario: string; email: string; password: string }): Observable<any> {
+    return this.apiService.postData('/auth/register', data).pipe(
+      tap(response => {
+        // Handle successful registration
+      })
+    );
+  }
+   
+  }

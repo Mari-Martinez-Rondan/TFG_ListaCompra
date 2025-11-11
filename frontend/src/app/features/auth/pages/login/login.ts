@@ -1,20 +1,33 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.html',
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  constructor(private router: Router) {}
+  credentials = { usuario: '', password: '' };
+  errorMessage: string | null = null;
+  constructor(private authService: AuthService, private router: Router) {}
 
-  onLogin() {
-    // Lógica de autenticación aquí
-    // Si la autenticación es exitosa, redirigir al usuario al dashboard
-    this.router.navigate(['/dashboard']);
+  onSubmit(): void {
+    if (!this.credentials.usuario || !this.credentials.password) {
+      this.errorMessage = 'Por favor, complete todos los campos.';
+      return;
+    }
+    this.authService.login(this.credentials).subscribe({
+      next: () => {
+        this.router.navigate(['/lista']);
+      },
+      error: (err) => {
+        this.errorMessage = 'Error de inicio de sesión: ' + err.message;
+      }
+    });
   }
 }

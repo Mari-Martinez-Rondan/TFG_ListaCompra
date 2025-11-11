@@ -1,0 +1,47 @@
+<div class="text-center mb-4">
+  <h2 class="fw-bold">Iniciar sesión</h2>
+  <p class="text-muted">Accede a tu cuenta para continuar</p>
+</div>
+
+<form (ngSubmit)="onSubmit()" #loginForm="ngForm" novalidate>
+  <div class="mb-3">
+    <label for="usuario" class="form-label">Usuario</label>
+    <input
+      type="text"
+      id="usuario"
+      name="usuario"
+      class="form-control"
+      [(ngModel)]="credentials.usuario"
+      required
+      placeholder="Introduce tu nombre de usuario"
+    />
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Contraseña</label>
+    <input
+      type="password"
+      id="password"
+      name="password"
+      class="form-control"
+      [(ngModel)]="credentials.password"
+      required
+      placeholder="Introduce tu contraseña"
+    />
+  </div>
+
+  <button
+    type="submit"
+    class="btn btn-primary w-100"
+    [disabled]="loginForm.invalid"
+  >
+    Entrar
+  </button>
+
+  <div class="text-center mt-3">
+    <small>
+      ¿No tienes cuenta?
+      <a routerLink="/register" class="text-decoration-none">Regístrate aquí</a>
+    </small>
+  </div>
+</form>

@@ -4,3 +4,17 @@
   }
 }
 
+.main-container{
+  min-height: calc(100vh - 60px); /* Ajusta según la altura del navbar y footer */
+}
+
+.sidebar {
+  width: 250px;
+}
+
+footer{
+  position: relative;
+  bottom: 0;
+  width: 100%;
+}
+
