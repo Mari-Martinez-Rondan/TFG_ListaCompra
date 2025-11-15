@@ -5,6 +5,7 @@ import { LoginComponent } from './features/auth/pages/login/login';
 import { RegisterComponent } from './features/auth/pages/register/register';
 import { listaDeCompraPages } from './features/listadecompra/listadecompra';
 import { PerfilComponent } from './features/usuarios/pages/perfil/perfil';
+import { authGuard } from './core/guards/auth.guard';
 
 
 export const routes: Routes = [
@@ -20,10 +21,12 @@ export const routes: Routes = [
    {
     path: '',
     component: MainLayout,
+    canActivate: [authGuard],
     children: [
         ...listaDeCompraPages,
         { path: 'perfil', component: PerfilComponent },
         { path: '', redirectTo: 'lista', pathMatch: 'full' }
     ]
-   }
+   },
+   {path: '**', redirectTo: 'login' }
 ];

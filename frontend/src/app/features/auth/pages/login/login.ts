@@ -12,12 +12,12 @@ import { AuthService } from '../../../../core/services/auth.service';
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  credentials = { usuario: '', password: '' };
+  credentials = { usuario: '', contrasena: '' };
   errorMessage: string | null = null;
   constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit(): void {
-    if (!this.credentials.usuario || !this.credentials.password) {
+    if (!this.credentials.usuario || !this.credentials.contrasena) {
       this.errorMessage = 'Por favor, complete todos los campos.';
       return;
     }

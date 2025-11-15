@@ -4,21 +4,78 @@
 </div>
 
 <form (ngSubmit)="onSubmit()" #registerForm="ngForm" novalidate>
+
+  <!-- Usuario -->
   <div class="mb-3">
-    <label for="usuario" class="form-label">Usuario</label>
+    <label for="nombreUsuario" class="form-label">Usuario *</label>
     <input
       type="text"
-      id="usuario"
-      name="usuario"
+      id="nombreUsuario"
+      name="nombreUsuario"
       class="form-control"
-      [(ngModel)]="data.usuario"
+      [(ngModel)]="data.nombreUsuario"
       required
       placeholder="Elige un nombre de usuario"
     />
   </div>
 
+  <!-- Nombre -->
   <div class="mb-3">
-    <label for="email" class="form-label">Correo electrónico</label>
+    <label for="nombre" class="form-label">Nombre *</label>
+    <input
+      type="text"
+      id="nombre"
+      name="nombre"
+      class="form-control"
+      [(ngModel)]="data.nombre"
+      required
+      placeholder="Tu nombre"
+    />
+  </div>
+
+  <!-- Primer apellido -->
+  <div class="mb-3">
+    <label for="apellido1" class="form-label">Primer apellido *</label>
+    <input
+      type="text"
+      id="apellido1"
+      name="apellido1"
+      class="form-control"
+      [(ngModel)]="data.apellido1"
+      required
+      placeholder="Tu primer apellido"
+    />
+  </div>
+
+  <!-- Segundo apellido (opcional) -->
+  <div class="mb-3">
+    <label for="apellido2" class="form-label">Segundo apellido (opcional)</label>
+    <input
+      type="text"
+      id="apellido2"
+      name="apellido2"
+      class="form-control"
+      [(ngModel)]="data.apellido2"
+      placeholder="Tu segundo apellido"
+    />
+  </div>
+
+  <!-- Teléfono (opcional) -->
+  <div class="mb-3">
+    <label for="telefono" class="form-label">Teléfono (opcional)</label>
+    <input
+      type="text"
+      id="telefono"
+      name="telefono"
+      class="form-control"
+      [(ngModel)]="data.telefono"
+      placeholder="Tu teléfono"
+    />
+  </div>
+
+  <!-- Email -->
+  <div class="mb-3">
+    <label for="email" class="form-label">Correo electrónico *</label>
     <input
       type="email"
       id="email"
@@ -26,25 +83,27 @@
       class="form-control"
       [(ngModel)]="data.email"
       required
-      placeholder="tu@email.com"
+      placeholder="email@ejemplo.com"
     />
   </div>
 
+  <!-- Contraseña -->
   <div class="mb-3">
-    <label for="password" class="form-label">Contraseña</label>
+    <label for="contrasena" class="form-label">Contraseña *</label>
     <input
       type="password"
-      id="password"
-      name="password"
+      id="contrasena"
+      name="contrasena"
       class="form-control"
-      [(ngModel)]="data.password"
+      [(ngModel)]="data.contrasena"
       required
-      placeholder="Introduce una contraseña segura"
+      placeholder="Introduce una contraseña"
     />
   </div>
 
+  <!-- Confirmar contraseña -->
   <div class="mb-3">
-    <label for="confirmar" class="form-label">Confirmar contraseña</label>
+    <label for="confirmar" class="form-label">Confirmar contraseña *</label>
     <input
       type="password"
       id="confirmar"
@@ -56,18 +115,29 @@
     />
   </div>
 
+  <!-- Error -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    {{ errorMessage }}
+  </div>
+
+  <!-- Botón -->
   <button
     type="submit"
     class="btn btn-success w-100"
-    [disabled]="registerForm.invalid || data.password !== data.confirmar"
+    [disabled]="
+      registerForm.invalid ||
+      data.contrasena !== data.confirmar
+    "
   >
     Crear cuenta
   </button>
 
+  <!-- Enlace -->
   <div class="text-center mt-3">
     <small>
       ¿Ya tienes una cuenta?
       <a routerLink="/login" class="text-decoration-none">Inicia sesión</a>
     </small>
   </div>
+
 </form>

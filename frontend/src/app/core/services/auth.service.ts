@@ -1,35 +1,36 @@
 import { Injectable } from "@angular/core";
 import { ApiService } from "./api.service";
 import { Observable, tap } from "rxjs";
+import { TokenService } from "./token.service";
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
-  constructor(private apiService: ApiService) {}
 
-  login(credentials: { usuario: string; password: string }): Observable<any> {
+  constructor(
+    private apiService: ApiService,
+    private tokenService: TokenService
+  ) {}
+
+  /** LOGIN */
+  login(credentials: { usuario: string; contrasena: string }): Observable<any> {
     return this.apiService.postData('/auth/login', credentials).pipe(
       tap(response => {
-        // Handle successful login
+        if (response.token) {
+          this.tokenService.setToken(response.token);
+        }
       })
     );
   }
 
-  logout(): Observable<any> {
-    return this.apiService.postData('/auth/logout', {}).pipe(
-      tap(response => {
-        // Handle successful logout
-      })
-    );
+  /** LOGOUT */
+  logout(): void {
+    this.tokenService.removeToken();
   }
-  
-  register(data: { usuario: string; email: string; password: string }): Observable<any> {
-    return this.apiService.postData('/auth/register', data).pipe(
-      tap(response => {
-        // Handle successful registration
-      })
-    );
+
+  /* REGISTER */
+  register(data: { nombreUsuario: string; nombre: string; apellido1: string; apellido2: string | null; telefono: string | null; email: string; contrasena: string }): Observable<any> {
+    return this.apiService.postData('/auth/register', data);
   }
-   
-  }
+}

@@ -13,18 +13,22 @@ import { AuthService } from '../../../../core/services/auth.service';
 })
 
 export class RegisterComponent {
-    data={ usuario: '', email: '', password: '' , confirmar: ''};
+    data={ nombreUsuario: '',nombre: '',apellido1: '',apellido2: '',telefono: '', email: '', contrasena: '' , confirmar: ''};
     errorMessage: string | null = null
 
     constructor(private authService: AuthService, private router: Router) {}
 
     onSubmit(): void {
-      if (!this.data.usuario || !this.data.email || !this.data.password) return;
-      if (this.data.password !== this.data.confirmar) {
+      if (!this.data.nombreUsuario || !this.data.nombre || !this.data.apellido1 || !this.data.email || !this.data.contrasena){
+        this.errorMessage = 'Por favor, complete todos los campos obligatorios.';
+        return;
+      };
+      if (this.data.contrasena !== this.data.confirmar) {
         this.errorMessage = 'Las contraseñas no coinciden.';
         return;
       }
-      this.authService.register(this.data).subscribe({
+     const playload = { nombreUsuario: this.data.nombreUsuario, nombre: this.data.nombre, apellido1: this.data.apellido1, apellido2: this.data.apellido2, telefono: this.data.telefono, email: this.data.email, contrasena: this.data.contrasena };
+      this.authService.register(playload).subscribe({
         next: () => {
           this.router.navigate(['/login']);
         },
