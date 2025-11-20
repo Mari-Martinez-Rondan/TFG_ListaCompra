@@ -1,143 +1,137 @@
-<div class="text-center mb-4">
-  <h2 class="fw-bold">Crear cuenta</h2>
-  <p class="text-muted">Regístrate para empezar a usar ListaCompra</p>
+<div class="auth-container d-flex justify-content-center align-items-center">
+
+  <div class="auth-card shadow">
+
+    <div class="auth-header text-center mb-4">
+      <h2 class="fw-bold mb-1">Crear cuenta</h2>
+      <p class="text-muted">Regístrate para continuar</p>
+    </div>
+
+    <form (ngSubmit)="onSubmit()" #registerForm="ngForm" novalidate>
+
+      <div class="row">
+        <div class="col-12 mb-3">
+          <label class="form-label fw-semibold">Nombre de usuario <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden"> obligatorio</span></label>
+          <input
+            type="text"
+            class="form-control modern-input"
+            [(ngModel)]="data.nombreUsuario"
+            name="nombreUsuario"
+            required
+            placeholder="Nombre de usuario"
+          />
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+          <label class="form-label fw-semibold">Nombre <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden"> obligatorio</span></label>
+          <input
+            type="text"
+            class="form-control modern-input"
+            [(ngModel)]="data.nombre"
+            name="nombre"
+            required
+            placeholder="Tu nombre"
+          />
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+          <label class="form-label fw-semibold">Primer apellido <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden"> obligatorio</span></label>
+          <input
+            type="text"
+            class="form-control modern-input"
+            [(ngModel)]="data.apellido1"
+            name="apellido1"
+            required
+            placeholder="Primer apellido"
+          />
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+          <label class="form-label fw-semibold">Segundo apellido</label>
+          <input
+            type="text"
+            class="form-control modern-input"
+            [(ngModel)]="data.apellido2"
+            name="apellido2"
+            placeholder="Segundo apellido"
+          />
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+          <label class="form-label fw-semibold">Teléfono</label>
+          <input
+            type="tel"
+            inputmode="tel"
+            pattern="^(?:\+34[ -]?)?(?:[6789](?:[ -]?\d){8})$"
+            class="form-control modern-input"
+            [(ngModel)]="data.telefono"
+            name="telefono"
+            #telefonoCtrl="ngModel"
+            placeholder="Ej: 612345678"
+          />
+          <div class="form-text text-danger mt-1" *ngIf="telefonoCtrl.invalid && (telefonoCtrl.dirty || telefonoCtrl.touched) && telefonoCtrl.value">
+            <div *ngIf="telefonoCtrl.errors?.['pattern']">Introduce un teléfono español válido (ej. 612345678 o +34 612 345 678).</div>
+          </div>
+        </div>
+
+        <div class="col-12 mb-3">
+          <label class="form-label fw-semibold">Email <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden"> obligatorio</span></label>
+          <input
+            type="email"
+            class="form-control modern-input"
+            [(ngModel)]="data.email"
+            name="email"
+            required
+            placeholder="ejemplo@correo.com"
+          />
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+          <label class="form-label fw-semibold">Contraseña <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden"> obligatorio</span></label>
+          <input
+            type="password"
+            class="form-control modern-input"
+            [(ngModel)]="data.contrasena"
+            name="contrasena"
+            required
+            placeholder="••••••••"
+          />
+        </div>
+
+        <div class="col-12 col-md-6 mb-3">
+          <label class="form-label fw-semibold">Confirmar contraseña <span class="text-danger" aria-hidden="true">*</span><span class="visually-hidden"> obligatorio</span></label>
+          <input
+            type="password"
+            class="form-control modern-input"
+            [(ngModel)]="data.confirmar"
+            name="confirmar"
+            required
+            placeholder="Repite la contraseña"
+          />
+        </div>
+      </div>
+
+      <div class="text-danger mb-2" *ngIf="errorMessage">{{ errorMessage }}</div>
+
+      <div class="mb-2"><small role="note"><span class="text-danger" aria-hidden="true">*</span> Los campos marcados con <strong>*</strong> son obligatorios.</small></div>
+
+      <button
+        type="submit"
+        class="btn btn-primary w-100 modern-btn"
+        [disabled]="registerForm.invalid || loading"
+      >
+        <span *ngIf="!loading">Crear cuenta</span>
+        <span *ngIf="loading">Creando...</span>
+      </button>
+
+      <div class="text-center mt-3">
+        <small>
+          ¿Ya tienes cuenta?
+          <a routerLink="/login" class="link-register">Inicia sesión aquí</a>
+        </small>
+      </div>
+
+    </form>
+
+  </div>
 </div>
-
-<form (ngSubmit)="onSubmit()" #registerForm="ngForm" novalidate>
-
-  <!-- Usuario -->
-  <div class="mb-3">
-    <label for="nombreUsuario" class="form-label">Usuario *</label>
-    <input
-      type="text"
-      id="nombreUsuario"
-      name="nombreUsuario"
-      class="form-control"
-      [(ngModel)]="data.nombreUsuario"
-      required
-      placeholder="Elige un nombre de usuario"
-    />
-  </div>
-
-  <!-- Nombre -->
-  <div class="mb-3">
-    <label for="nombre" class="form-label">Nombre *</label>
-    <input
-      type="text"
-      id="nombre"
-      name="nombre"
-      class="form-control"
-      [(ngModel)]="data.nombre"
-      required
-      placeholder="Tu nombre"
-    />
-  </div>
-
-  <!-- Primer apellido -->
-  <div class="mb-3">
-    <label for="apellido1" class="form-label">Primer apellido *</label>
-    <input
-      type="text"
-      id="apellido1"
-      name="apellido1"
-      class="form-control"
-      [(ngModel)]="data.apellido1"
-      required
-      placeholder="Tu primer apellido"
-    />
-  </div>
-
-  <!-- Segundo apellido (opcional) -->
-  <div class="mb-3">
-    <label for="apellido2" class="form-label">Segundo apellido (opcional)</label>
-    <input
-      type="text"
-      id="apellido2"
-      name="apellido2"
-      class="form-control"
-      [(ngModel)]="data.apellido2"
-      placeholder="Tu segundo apellido"
-    />
-  </div>
-
-  <!-- Teléfono (opcional) -->
-  <div class="mb-3">
-    <label for="telefono" class="form-label">Teléfono (opcional)</label>
-    <input
-      type="text"
-      id="telefono"
-      name="telefono"
-      class="form-control"
-      [(ngModel)]="data.telefono"
-      placeholder="Tu teléfono"
-    />
-  </div>
-
-  <!-- Email -->
-  <div class="mb-3">
-    <label for="email" class="form-label">Correo electrónico *</label>
-    <input
-      type="email"
-      id="email"
-      name="email"
-      class="form-control"
-      [(ngModel)]="data.email"
-      required
-      placeholder="email@ejemplo.com"
-    />
-  </div>
-
-  <!-- Contraseña -->
-  <div class="mb-3">
-    <label for="contrasena" class="form-label">Contraseña *</label>
-    <input
-      type="password"
-      id="contrasena"
-      name="contrasena"
-      class="form-control"
-      [(ngModel)]="data.contrasena"
-      required
-      placeholder="Introduce una contraseña"
-    />
-  </div>
-
-  <!-- Confirmar contraseña -->
-  <div class="mb-3">
-    <label for="confirmar" class="form-label">Confirmar contraseña *</label>
-    <input
-      type="password"
-      id="confirmar"
-      name="confirmar"
-      class="form-control"
-      [(ngModel)]="data.confirmar"
-      required
-      placeholder="Repite la contraseña"
-    />
-  </div>
-
-  <!-- Error -->
-  <div *ngIf="errorMessage" class="alert alert-danger">
-    {{ errorMessage }}
-  </div>
-
-  <!-- Botón -->
-  <button
-    type="submit"
-    class="btn btn-success w-100"
-    [disabled]="
-      registerForm.invalid ||
-      data.contrasena !== data.confirmar
-    "
-  >
-    Crear cuenta
-  </button>
-
-  <!-- Enlace -->
-  <div class="text-center mt-3">
-    <small>
-      ¿Ya tienes una cuenta?
-      <a routerLink="/login" class="text-decoration-none">Inicia sesión</a>
-    </small>
-  </div>
-
-</form>

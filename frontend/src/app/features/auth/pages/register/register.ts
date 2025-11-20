@@ -15,10 +15,16 @@ import { AuthService } from '../../../../core/services/auth.service';
 export class RegisterComponent {
     data={ nombreUsuario: '',nombre: '',apellido1: '',apellido2: '',telefono: '', email: '', contrasena: '' , confirmar: ''};
     errorMessage: string | null = null
+    loading = false;
 
-    constructor(private authService: AuthService, private router: Router) {}
+    constructor(private authService: AuthService, private router: Router) {
+      if (this.authService.isAuthenticated()) {
+        this.router.navigate(['/lista']);
+      }
+    }
 
     onSubmit(): void {
+      this.errorMessage = null;
       if (!this.data.nombreUsuario || !this.data.nombre || !this.data.apellido1 || !this.data.email || !this.data.contrasena){
         this.errorMessage = 'Por favor, complete todos los campos obligatorios.';
         return;
@@ -27,13 +33,24 @@ export class RegisterComponent {
         this.errorMessage = 'Las contraseñas no coinciden.';
         return;
       }
+      this.loading = true;
      const playload = { nombreUsuario: this.data.nombreUsuario, nombre: this.data.nombre, apellido1: this.data.apellido1, apellido2: this.data.apellido2, telefono: this.data.telefono, email: this.data.email, contrasena: this.data.contrasena };
       this.authService.register(playload).subscribe({
         next: () => {
+          this.loading = false;
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          this.errorMessage = 'Error al crear la cuenta: ' + err.message;
+          // If backend provided a message in the response body, show it.
+          const serverMsg = err && err.error ? err.error : null;
+          if (serverMsg && typeof serverMsg === 'string') {
+            this.errorMessage = `Error al crear la cuenta: ${serverMsg}`;
+          } else if (err && err.status) {
+            this.errorMessage = `Error al crear la cuenta: ${err.status} ${err.statusText || ''}`.trim();
+          } else {
+            this.errorMessage = 'Error al crear la cuenta: ' + (err?.message || 'unknown');
+          }
+          this.loading = false;
         }
       });
     }

@@ -1,20 +1,41 @@
-@media (min-width: 992px) {
-  .main-content {
-    margin-left: 250px; /* ancho del sidebar */
-  }
-}
-
-.main-container{
-  min-height: calc(100vh - 60px); /* Ajusta según la altura del navbar y footer */
-}
-
+/* --- SIDEBAR FIJO EN ESCRITORIO --- */
 .sidebar {
   width: 250px;
-}
-
-footer{
-  position: relative;
+  position: fixed;
+  top: 56px; /* altura navbar de Bootstrap */
   bottom: 0;
-  width: 100%;
+  left: 0;
+  overflow-y: auto;
+  background: #f8f9fa;
+  border-right: 1px solid #ddd;
+  padding: 1rem;
 }
 
+/* --- CONTENIDO AL LADO DEL SIDEBAR --- */
+.content {
+  margin-left: 250px; 
+  margin-top: 56px; 
+  padding: 1.5rem;
+  min-height: calc(100vh - 56px);
+}
+
+/* --- FOOTER --- */
+footer {
+  margin-left: 250px;
+}
+
+/* --- RESPONSIVE: en móvil el sidebar fijo desaparece --- */
+@media (max-width: 991px) {
+  .sidebar {
+    display: none; /* lo manejas solo con offcanvas */
+  }
+
+  .content,
+  footer {
+    margin-left: 0;
+  }
+
+  .content {
+    margin-top: 56px;
+  }
+}

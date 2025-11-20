@@ -1,8 +1,75 @@
-h2 {
+/*h2 {
   color: #007bff;
 }
 
 button {
   font-weight: 500;
   letter-spacing: 0.5px;
+}
+
+.login-container {
+  max-width: 400px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+}*/
+.auth-container {
+  height: 100vh;
+  background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
+}
+
+.auth-card {
+  background: #ffffff;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 380px;
+  border-radius: 16px;
+  animation: fadeIn 0.4s ease;
+}
+
+.auth-header h2 {
+  color: #0d6efd;
+}
+
+.modern-input {
+  border-radius: 10px !important;
+  padding: 12px !important;
+  border: 1px solid #ced4da;
+  transition: all 0.25s ease;
+}
+
+.modern-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+}
+
+.modern-btn {
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+
+.modern-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.link-register {
+  color: #0d6efd;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link-register:hover {
+  text-decoration: underline;
+}
+
+/* Animación suave */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }

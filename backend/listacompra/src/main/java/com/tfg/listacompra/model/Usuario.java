@@ -2,6 +2,8 @@ package com.tfg.listacompra.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "usuarios")
@@ -27,6 +29,7 @@ public class Usuario {
     private String email;
 
     @Column(nullable = false)
+    @JsonIgnore
     private String contrasena;
 
     @Column(length = 15)
@@ -34,6 +37,7 @@ public class Usuario {
 
     //Relación con ListaCompra
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<ListaCompra> listas;
 
     //Constructores

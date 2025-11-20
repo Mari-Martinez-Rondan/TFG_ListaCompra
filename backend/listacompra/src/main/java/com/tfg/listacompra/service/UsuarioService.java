@@ -14,6 +14,10 @@ public class UsuarioService {
     @Autowired
     private UsuarioRepository usuarioRepository;
 
+    public UsuarioService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
+    }
+
     // Listar todos los usuarios
     public List<Usuario> listarTodos() {
         return usuarioRepository.findAll();
@@ -46,5 +50,10 @@ public class UsuarioService {
 
     public boolean existePorNombreUsuario(String nombreUsuario) {
         return usuarioRepository.existsByNombreUsuario(nombreUsuario);
+    }
+
+    // Buscar usuario por nombre de usuario
+    public Optional<Usuario> obtenerPorNombreUsuario(String nombreUsuario) {
+        return usuarioRepository.findByNombreUsuario(nombreUsuario);
     }
 }

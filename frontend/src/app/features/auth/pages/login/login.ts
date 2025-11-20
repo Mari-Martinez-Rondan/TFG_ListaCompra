@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
+import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -12,21 +13,38 @@ import { AuthService } from '../../../../core/services/auth.service';
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  credentials = { usuario: '', contrasena: '' };
+  credentials = { nombreUsuario: '', contrasena: '' };
   errorMessage: string | null = null;
-  constructor(private authService: AuthService, private router: Router) {}
+  loading = false;
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    private notificationService: NotificationService
+  ) {
+    //Redirige si ya está logueado
+    if (this.authService.isAuthenticated()) {
+      this.router.navigate(['/lista']);
+    }
+  }
 
   onSubmit(): void {
-    if (!this.credentials.usuario || !this.credentials.contrasena) {
+    this.errorMessage = null;
+    if (!this.credentials.nombreUsuario || !this.credentials.contrasena) {
       this.errorMessage = 'Por favor, complete todos los campos.';
       return;
     }
+    this.loading = true;
     this.authService.login(this.credentials).subscribe({
       next: () => {
+        this.loading = false;
+        // Emitir mensaje de bienvenida usando el nombre de usuario usado en el login
+        const user = this.credentials.nombreUsuario || '';
+        this.notificationService.show('Bienvenido ' + user + '!');
         this.router.navigate(['/lista']);
       },
       error: (err) => {
         this.errorMessage = 'Error de inicio de sesión: ' + err.message;
+        this.loading = false;
       }
     });
   }

@@ -1,8 +1,86 @@
-h2 {
+/*h2 {
   color: #28a745;
 }
 
 button {
   font-weight: 500;
   letter-spacing: 0.5px;
+}*/
+.auth-container {
+  height: 100vh;
+  background: linear-gradient(135deg, #e3f2fd, #f8f9fa);
 }
+
+.auth-card {
+  background: #ffffff;
+  padding: 2.5rem;
+  width: 100%;
+  max-width: 450px;
+  border-radius: 16px;
+  animation: fadeIn 0.4s ease;
+}
+
+.auth-header h2 {
+  color: #0d6efd;
+  font-size: 1.8rem;
+}
+
+.modern-input {
+  border-radius: 10px !important;
+  padding: 12px !important;
+  border: 1px solid #ced4da;
+  transition: all 0.25s ease;
+}
+
+.modern-input:focus {
+  border-color: #0d6efd;
+  box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.15);
+}
+
+.modern-btn {
+  border-radius: 10px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: transform 0.2s;
+}
+
+.modern-btn:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.link-register {
+  color: #0d6efd;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.link-register:hover {
+  text-decoration: underline;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Fix: avoid card being vertically cut or taller than viewport */
+.auth-container {
+  min-height: 100vh;
+  align-items: flex-start !important; /* override inline bootstrap class when needed */
+  padding-top: 3.5rem; /* leave space for any fixed header */
+  padding-bottom: 3.5rem;
+}
+
+.auth-card {
+  max-height: calc(100vh - 7rem); /* keep card within viewport */
+  overflow: auto; /* allow scrolling inside card on very small screens */
+  margin: 0 auto; /* center horizontally */
+}
+
+/* Improve spacing for very small screens */
+@media (max-height: 640px) {
+  .auth-container { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+  .auth-card { max-height: calc(100vh - 3rem); }
+}
+

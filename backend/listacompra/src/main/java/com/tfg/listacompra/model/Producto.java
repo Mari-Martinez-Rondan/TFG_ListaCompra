@@ -1,6 +1,7 @@
 package com.tfg.listacompra.model;
 
 import jakarta.persistence.*;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "productos")
@@ -22,6 +23,7 @@ public class Producto {
     //Relación con ListaCompra
     @ManyToOne
     @JoinColumn(name = "lista_id", nullable = false)
+    @JsonBackReference
     private ListaCompra listaCompra;
 
     //Constructores

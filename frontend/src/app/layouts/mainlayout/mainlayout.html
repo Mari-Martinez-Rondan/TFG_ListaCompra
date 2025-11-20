@@ -4,6 +4,12 @@
   <app-sidebar></app-sidebar>
 
   <div class="content flex-grow-1 p-4">
+    <!-- Mensaje de bienvenida persistente con botón de cierre -->
+    <div *ngIf="welcomeMessage" class="alert alert-success d-flex justify-content-between align-items-center" role="alert">
+      <div class="flex-grow-1">{{ welcomeMessage }}</div>
+      <button type="button" class="btn-close ms-3" aria-label="Cerrar" (click)="closeMessage()"></button>
+    </div>
+
     <router-outlet></router-outlet>
   </div>
 </div>

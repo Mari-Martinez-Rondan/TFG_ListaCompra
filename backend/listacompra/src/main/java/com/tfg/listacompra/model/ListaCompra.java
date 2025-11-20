@@ -2,6 +2,8 @@ package com.tfg.listacompra.model;
 
 import jakarta.persistence.*;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Entity
 @Table(name = "listas_compra")  
@@ -17,9 +19,11 @@ public class ListaCompra {
     //Relación con Usuario
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
+    @JsonBackReference
     private Usuario usuario;
 
     @OneToMany(mappedBy = "listaCompra", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private List<Producto> productos;
 
     //Constructores

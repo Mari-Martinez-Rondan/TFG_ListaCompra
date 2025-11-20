@@ -14,10 +14,10 @@ export class AuthService {
   ) {}
 
   /** LOGIN */
-  login(credentials: { usuario: string; contrasena: string }): Observable<any> {
+  login(credentials: { nombreUsuario: string; contrasena: string }): Observable<any> {
     return this.apiService.postData('/auth/login', credentials).pipe(
-      tap(response => {
-        if (response.token) {
+      tap((response: any) => {
+        if (response.token && response) {
           this.tokenService.setToken(response.token);
         }
       })
@@ -29,8 +29,18 @@ export class AuthService {
     this.tokenService.removeToken();
   }
 
-  /* REGISTER */
+  /* REGISTER 
   register(data: { nombreUsuario: string; nombre: string; apellido1: string; apellido2: string | null; telefono: string | null; email: string; contrasena: string }): Observable<any> {
     return this.apiService.postData('/auth/register', data);
+  }*/
+ register(playload: any): Observable<any> {
+    // The backend returns a plain text message on successful registration.
+    // Request responseType 'text' to avoid HttpClient JSON parse errors.
+    return this.apiService.postData('/auth/register', playload, { responseType: 'text' as 'json' });
+  }
+
+  /* CHECK AUTHENTICATION */
+  isAuthenticated(): boolean {
+    return this.tokenService.isLoggedIn();
   }
 }

@@ -1,32 +1,38 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './layouts/mainlayout/mainlayout';
-import { AuthLayout } from './layouts/authlayout/authlayout';
 import { LoginComponent } from './features/auth/pages/login/login';
 import { RegisterComponent } from './features/auth/pages/register/register';
 import { listaDeCompraPages } from './features/listadecompra/listadecompra';
 import { PerfilComponent } from './features/usuarios/pages/perfil/perfil';
 import { authGuard } from './core/guards/auth.guard';
 
-
 export const routes: Routes = [
-   {
-    path: '',
-    component: AuthLayout,
-    children: [
-        {path: '', redirectTo: 'login', pathMatch: 'full' },
-        { path: 'login', component: LoginComponent },
-        { path: 'register', component: RegisterComponent }
-    ]
-   },
-   {
+  // público
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/pages/login/login').then(m => m.LoginComponent),
+  },
+  {
+    path: 'register',
+    loadComponent: () =>
+      import('./features/auth/pages/register/register').then(m => m.RegisterComponent),
+  },
+
+  // protegido
+  {
     path: '',
     component: MainLayout,
     canActivate: [authGuard],
     children: [
-        ...listaDeCompraPages,
-        { path: 'perfil', component: PerfilComponent },
-        { path: '', redirectTo: 'lista', pathMatch: 'full' }
-    ]
-   },
-   {path: '**', redirectTo: 'login' }
+      ...listaDeCompraPages,
+      { path: 'perfil', component: PerfilComponent },
+    ],
+  },
+
+  // redirección inicial
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+
+  // fallback
+  { path: '**', redirectTo: '/login' }
 ];
