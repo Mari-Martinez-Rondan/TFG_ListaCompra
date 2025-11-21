@@ -11,6 +11,12 @@
       <i class="bi bi-list"></i>
     </button>
 
+    <!-- Logout en móviles: botón pequeño visible solo en pantallas < lg -->
+    <button class="btn btn-outline-light btn-sm d-lg-none me-2 text-nowrap" *ngIf="isLoggedIn()" (click)="logout()" aria-label="Cerrar sesión">
+      <i class="bi bi-box-arrow-right"></i>
+      <span class="ms-1">Cerrar sesión</span>
+    </button>
+
     <!-- Logo o nombre de la app -->
     <a class="navbar-brand fw-bold" routerLink="/">ListaCompra</a>
 

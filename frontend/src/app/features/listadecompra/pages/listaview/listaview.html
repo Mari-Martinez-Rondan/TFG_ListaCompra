@@ -1,0 +1,43 @@
+<div class="container py-4">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<div class="d-flex align-items-center gap-3">
+			<h2 class="mb-0">Mi lista de la compra</h2>
+			<select class="form-select form-select-sm" style="max-width:220px" [(ngModel)]="activeListId" (ngModelChange)="selectList($event)">
+				<option *ngFor="let l of listas" [value]="l.id">{{ l.name }}</option>
+			</select>
+			<button class="btn btn-sm btn-outline-secondary" (click)="createListPrompt()">Nueva lista</button>
+		</div>
+	</div>
+
+	<div *ngIf="items.length === 0" class="alert alert-secondary">La lista está vacía. Añade productos desde la sección Productos.</div>
+
+	<div *ngIf="items.length > 0" class="list-group">
+		<div *ngFor="let it of items" class="list-group-item">
+			<div class="d-flex justify-content-between align-items-center">
+				<div>
+					<div class="fw-bold">{{ it.producto.nombre }}</div>
+					<div class="small text-muted">{{ it.producto.marca }} • {{ it.producto.supermercado }}</div>
+				</div>
+				<div class="text-end">
+					<div class="small">Precio unidad: <strong>{{ it.producto.precio }}</strong></div>
+					<div class="small">Subtotal: <strong>{{ formatEuro(itemSubtotal(it)) }}</strong></div>
+				</div>
+			</div>
+			<div class="d-flex justify-content-between align-items-center mt-2">
+				<div class="d-flex align-items-center">
+					<button class="btn btn-sm btn-outline-secondary me-2" aria-label="Disminuir" (click)="decrease(it)">−</button>
+					<input type="number" min="1" [value]="it.cantidad" style="width:64px" (change)="setQuantity(it, $event.target.value)" class="form-control form-control-sm" />
+					<button class="btn btn-sm btn-outline-secondary ms-2 me-3" aria-label="Aumentar" (click)="increase(it)">+</button>
+					<div class="small text-muted">x {{ it.cantidad }}</div>
+				</div>
+				<div>
+					<button class="btn btn-sm btn-outline-danger" (click)="remove(it.producto.id)">Eliminar</button>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div *ngIf="items.length > 0" class="mt-3 d-flex justify-content-end">
+		<div class="fw-bold">Total: {{ formatEuro(grandTotal()) }}</div>
+	</div>
+</div>

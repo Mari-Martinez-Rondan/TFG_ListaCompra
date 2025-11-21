@@ -1,0 +1,39 @@
+<div class="container py-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2 class="mb-0">Productos</h2>
+    <div class="d-flex gap-2">
+      <input class="form-control" placeholder="Buscar producto..." [(ngModel)]="searchTerm" aria-label="Buscar productos">
+      <input class="form-control" placeholder="Filtrar por supermercado..." [(ngModel)]="filtroSupermercado" aria-label="Filtrar por supermercado">
+      <select class="form-select" style="max-width: 200px;" [(ngModel)]="activeListId" (ngModelChange)="selectList($event)">
+        <option *ngFor="let l of listas" [value]="l.id">{{ l.name }}</option>
+      </select>
+      <button class="btn btn-outline-secondary" (click)="createListPrompt()">Nueva lista</button>
+      <button class="btn btn-outline-secondary" (click)="cargarTodos()">Recargar</button>
+    </div>
+  </div>
+
+  <div *ngIf="cargando" class="text-center py-5">
+    <div class="spinner-border" role="status"></div>
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">{{ error }}</div>
+
+  <div class="row row-cols-1 row-cols-md-3 g-3">
+    <div class="col" *ngFor="let p of aplicarFiltro()">
+      <div class="card h-100 shadow-sm">
+        <div class="card-body d-flex flex-column">
+          <h5 class="card-title">{{ p.nombre }}</h5>
+          <p class="small text-muted mb-1">{{ p.marca }} • {{ p.categoria }}</p>
+          <p class="mb-2">{{ p.descripcion }}</p>
+          <div class="mt-auto d-flex justify-content-between align-items-center">
+            <div>
+              <strong>{{ p.precio }}</strong>
+              <div class="small text-muted">{{ p.supermercado }}</div>
+            </div>
+            <button class="btn btn-sm btn-outline-primary" (click)="agregarALista(p)">Añadir a lista</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
