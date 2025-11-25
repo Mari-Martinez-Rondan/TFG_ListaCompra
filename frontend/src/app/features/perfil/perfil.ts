@@ -1,22 +1,22 @@
 import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { PerfilService } from '../../../../core/services/perfil.service';
+import { PerfilService } from "../../core/services/perfil.service";
+import { TokenService } from '../../core/services/token.service';
 
 @Component({
-  selector: "app-perfil",
+  selector: 'app-perfil',
   standalone: true,
   imports: [CommonModule, FormsModule],
-  templateUrl: "./perfil.html",
-  styleUrls: ["./perfil.css"]
+  templateUrl: './perfil.html',
+  styleUrls: ['./perfil.css']
 })
 export class PerfilComponent implements OnInit {
+  constructor(private perfilService: PerfilService, private tokenService: TokenService) {}
   perfilData: any = {};
   nuevaContrasena: string = '';
   mensajePerfil: string = '';
   mensajeContrasena: string = '';
-
-  constructor(private perfilService: PerfilService) {}
 
   ngOnInit(): void {
     this.cargarPerfil();
@@ -25,7 +25,6 @@ export class PerfilComponent implements OnInit {
   cargarPerfil() {
     this.perfilService.obtenerPerfil().subscribe(
       (perfil) => {
-        console.log('Perfil cargado:', perfil);
         this.perfilData = perfil;
       },
       (error) => {

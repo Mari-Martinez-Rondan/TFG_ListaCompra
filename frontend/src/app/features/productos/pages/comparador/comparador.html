@@ -1,8 +1,8 @@
-<div class="container py-4">
+<div class="container-fluid py-4">
   <h2>Comparador</h2>
 
   <div class="input-group mb-3">
-    <input type="text" class="form-control" placeholder="Buscar producto..." [(ngModel)]="termino">
+    <input type="text" class="form-control" placeholder="Buscar producto..." [(ngModel)]="termino" (keyup.enter)="buscar()">
     <button class="btn btn-primary" (click)="buscar()">Buscar</button>
   </div>
 

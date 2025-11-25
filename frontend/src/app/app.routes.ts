@@ -10,6 +10,7 @@ import { listaDeCompraPages } from './features/listadecompra/listadecompra';
 import { ListadoProductosComponent } from './features/productos/pages/listadoProductos';
 import { ComparadorComponent } from './features/productos/pages/comparador/comparador';
 
+
 export const routes: Routes = [
   // --- RUTAS PÚBLICAS ---
   {
@@ -36,6 +37,7 @@ export const routes: Routes = [
       // --- NUEVAS RUTAS DE PRODUCTOS ---
       { path: 'productos', component: ListadoProductosComponent },
       { path: 'comparador', component: ComparadorComponent },
+      {path: 'perfil', component: PerfilComponent}
     ],
   },
 
