@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ProductoSupermercado } from '../models/ProductoSupermercado';
+import { TokenService } from './token.service';
 
 export interface ListaItem {
   producto: ProductoSupermercado;
@@ -20,40 +21,98 @@ interface IndexData {
 
 @Injectable({ providedIn: 'root' })
 export class ListaService {
-  private indexKey = 'listas_index';
+  private indexKeyBase = 'listas_index';
   private listPrefix = 'lista_';
   private index: IndexData = { lists: [] };
 
-  constructor() {
+  constructor(private tokenService: TokenService) {
     this.loadIndex();
     this.migrateOldSingleList();
     if (!this.index.lists || this.index.lists.length === 0) {
-      // ensure at least one list exists
       const id = this.createList('Principal');
       this.setActiveList(id);
     }
   }
 
+  refreshForCurrentUser(): void {
+    try {
+      const user = this.tokenService.getUsername() ?? 'anon';
+      const userKey = `${this.indexKeyBase}_${user}`;
+      const rawUser = localStorage.getItem(userKey);
+
+      if (rawUser) {
+        this.index = JSON.parse(rawUser) as IndexData;
+        return;
+      }
+
+      const anonKey = `${this.indexKeyBase}_anon`;
+      const rawAnon = localStorage.getItem(anonKey);
+      if (rawAnon) {
+        const anonIndex = JSON.parse(rawAnon) as IndexData;
+        this.index = { lists: [] };
+        for (const meta of anonIndex.lists) {
+          const newMeta: ListaMeta = { ...meta };
+          this.index.lists.push(newMeta);
+          const legacyKey = `${this.listPrefix}${meta.id}_anon`;
+          const legacyItems = localStorage.getItem(legacyKey);
+          if (legacyItems) {
+            const targetKey = `${this.listPrefix}${meta.id}_${user}`;
+            if (!localStorage.getItem(targetKey)) {
+              localStorage.setItem(targetKey, legacyItems);
+            }
+          }
+        }
+        localStorage.setItem(userKey, JSON.stringify(this.index));
+        return;
+      }
+
+      this.index = { lists: [] };
+    } catch (e) {
+      this.index = { lists: [] };
+    } finally {
+      if (!this.index.lists || this.index.lists.length === 0) {
+        const id = this.createList('Principal');
+        this.setActiveList(id);
+      }
+    }
+  }
+
+  private getIndexKey(): string {
+    const user = this.tokenService.getUsername() ?? 'anon';
+    return `${this.indexKeyBase}_${user}`;
+  }
+
   private loadIndex(): void {
     try {
-      const raw = localStorage.getItem(this.indexKey);
-      this.index = raw ? JSON.parse(raw) as IndexData : { lists: [] };
+      const userKey = this.getIndexKey();
+      const rawUser = localStorage.getItem(userKey);
+      if (rawUser) {
+        this.index = JSON.parse(rawUser) as IndexData;
+        return;
+      }
+      this.index = { lists: [] };
     } catch (e) {
       this.index = { lists: [] };
     }
   }
 
   private saveIndex(): void {
-    localStorage.setItem(this.indexKey, JSON.stringify(this.index));
+    const userKey = this.getIndexKey();
+    localStorage.setItem(userKey, JSON.stringify(this.index));
   }
 
   private listKey(id: string): string {
-    return `${this.listPrefix}${id}`;
+    const user = this.tokenService.getUsername() ?? 'anon';
+    return `${this.listPrefix}${id}_${user}`;
   }
 
   private loadListItems(id: string): ListaItem[] {
     try {
       const raw = localStorage.getItem(this.listKey(id));
+      if (!raw) {
+        const legacy = localStorage.getItem(`lista_${id}`);
+        if (legacy) return JSON.parse(legacy) as ListaItem[];
+      }
       return raw ? JSON.parse(raw) as ListaItem[] : [];
     } catch (e) {
       return [];
@@ -162,18 +221,13 @@ export class ListaService {
     return items.reduce((s, i) => s + i.cantidad, 0);
   }
 
-  /**
-   * If an old single-key list exists, migrate it into a default list named 'Principal'.
-   */
   private migrateOldSingleList(): void {
     try {
       const raw = localStorage.getItem('lista_compra');
       if (!raw) return;
       const existing = JSON.parse(raw) as ListaItem[];
-      // create default list and move items
       const id = this.createList('Principal');
       this.saveListItems(id, existing);
-      // remove old key
       localStorage.removeItem('lista_compra');
       this.setActiveList(id);
     } catch (e) {

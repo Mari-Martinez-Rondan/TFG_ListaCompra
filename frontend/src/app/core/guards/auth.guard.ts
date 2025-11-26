@@ -9,7 +9,8 @@ export const authGuard: CanActivateFn = () => {
 	const tokenService = inject(TokenService);
 	const router = inject(Router);
 
-	if (tokenService.getToken()) {
+	// Use isLoggedIn() so we reject expired tokens as well
+	if (tokenService.isLoggedIn()) {
 		return true;
 	}
 

@@ -1,7 +1,7 @@
 <div class="container-fluid py-4">
-  <div class="d-flex justify-content-between align-items-center mb-3">
+  <div *ngIf="showHeader" class="d-flex justify-content-between align-items-center mb-3">
     <h2 class="mb-0">Productos</h2>
-    <div class="d-flex gap-2">
+    <div class="d-flex gap-2 products-controls">
       <input class="form-control" placeholder="Buscar producto..." [(ngModel)]="searchTerm" aria-label="Buscar productos">
       <input class="form-control" placeholder="Filtrar por supermercado..." [(ngModel)]="filtroSupermercado" aria-label="Filtrar por supermercado">
       <select class="form-select" style="max-width: 200px;" [(ngModel)]="activeListId" (ngModelChange)="selectList($event)">
@@ -30,7 +30,13 @@
               <strong>{{ p.precio }}</strong>
               <div class="small text-muted">{{ p.supermercado }}</div>
             </div>
-            <button class="btn btn-sm btn-outline-primary" (click)="agregarALista(p)">Añadir a lista</button>
+            <div class="d-flex align-items-center gap-2">
+              <button class="btn btn-sm btn-outline-primary" (click)="agregarALista(p)">Añadir a lista</button>
+              <button *ngIf="!onlyFavorites" class="btn btn-sm btn-outline-secondary btn-fav" [class.filled]="isFavorite(p)" (click)="$event.stopPropagation(); toggleFavorite(p)" [attr.aria-pressed]="isFavorite(p)" [attr.title]="isFavorite(p) ? 'Quitar de favoritos' : 'Añadir a favoritos'" [attr.aria-label]="isFavorite(p) ? 'Quitar de favoritos' : 'Añadir a favoritos'">
+                <span class="fav-icon" aria-hidden="true">{{ isFavorite(p) ? '★' : '☆' }}</span>
+              </button>
+              <button *ngIf="onlyFavorites" class="btn btn-sm btn-outline-danger" (click)="$event.stopPropagation(); removeFavorite(p)">Eliminar</button>
+            </div>
           </div>
         </div>
       </div>

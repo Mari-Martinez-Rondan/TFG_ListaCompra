@@ -8,32 +8,38 @@
   <div class="offcanvas-body p-0">
     <ul class="nav flex-column menu-list">
       <li class="nav-item">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" data-bs-dismiss="offcanvas">
           <i class="bi bi-house-door me-2"></i> Inicio
         </a>
       </li>
 
       <li class="nav-item">
-        <a routerLink="/lista" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <a routerLink="/lista" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" data-bs-dismiss="offcanvas">
           <i class="bi bi-bag-check me-2"></i> Mis listas
         </a>
       </li>
 
+      <li class="nav-item d-lg-none">
+        <a routerLink="/perfil" routerLinkActive="active" class="nav-link">
+          <i class="bi bi-person-circle me-2"></i> Perfil
+        </a>
+      </li>
+
       <li class="nav-item">
-        <a routerLink="/productos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <a routerLink="/productos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" data-bs-dismiss="offcanvas">
           <i class="bi bi-box-seam me-2"></i> Productos
         </a>
       </li>
 
       <li class="nav-item">
-        <a routerLink="/comparador" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
-          <i class="bi bi-bar-chart me-2"></i> Comparador
+        <a routerLink="/favoritos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" data-bs-dismiss="offcanvas">
+          <i class="bi bi-star me-2"></i> Favoritos <span class="badge bg-secondary ms-2">{{ favoritesCount }}</span>
         </a>
       </li>
 
       <li class="nav-item">
-        <a routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
-          <i class="bi bi-person-circle me-2"></i> Perfil
+        <a routerLink="/comparador" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link" data-bs-dismiss="offcanvas">
+          <i class="bi bi-bar-chart me-2"></i> Comparador
         </a>
       </li>
     </ul>
@@ -63,15 +69,17 @@
     </li>
 
     <li class="nav-item">
+      <a routerLink="/favoritos" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
+        <i class="bi bi-star me-2"></i> Favoritos <span class="badge bg-secondary ms-2">{{ favoritesCount }}</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
       <a routerLink="/comparador" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
         <i class="bi bi-bar-chart me-2"></i> Comparador
       </a>
     </li>
 
-    <li class="nav-item">
-      <a routerLink="/perfil" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="nav-link">
-        <i class="bi bi-person-circle me-2"></i> Perfil
-      </a>
-    </li>
+    
   </ul>
 </div>

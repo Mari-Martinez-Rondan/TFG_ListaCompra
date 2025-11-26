@@ -1,0 +1,13 @@
+/* Styles for list view actions */
+.lista-actions .btn-wide {
+	min-width: 140px;
+	white-space: nowrap;
+}
+
+@media (max-width: 576px) {
+	/* On very small screens allow wrapping to avoid overflow */
+	.lista-actions .btn-wide {
+		min-width: 0;
+		white-space: normal;
+	}
+}

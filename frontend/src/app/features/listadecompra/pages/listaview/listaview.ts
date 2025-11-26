@@ -2,6 +2,8 @@ import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from '@angular/forms';
 import { ListaService, ListaItem } from '../../../../core/services/lista.service';
+import { ListaApiService } from '../../../../core/services/lista-api.service';
+import { TokenService } from '../../../../core/services/token.service';
 import { NotificationService } from '../../../../core/services/notification.service';
 
 @Component({
@@ -16,14 +18,65 @@ export class ListaViewComponent {
   listas: { id: string; name: string }[] = [];
   activeListId?: string;
 
-  constructor(private listaService: ListaService, private notificationService: NotificationService) {
+  constructor(private listaService: ListaService,
+              private notificationService: NotificationService,
+              private apiListas: ListaApiService,
+              private tokenService: TokenService) {
     this.refreshLists();
     this.refresh();
   }
 
   refreshLists(): void {
-    this.listas = this.listaService.getLists().map(l => ({ id: l.id, name: l.name }));
-    this.activeListId = this.listaService.getActiveListId();
+    // Load lists from the server for the authenticated user
+    this.apiListas.obtenerMisListas().subscribe({
+      next: (res) => {
+        // API response received
+        // Expecting an array of lists with { id, nombre } or similar
+        // Apply an extra client-side safety filter: if the server returns user info,
+        // only keep lists that belong to the current authenticated user. This
+        // protects against server misconfiguration returning global lists.
+        const username = this.tokenService.getUsername();
+        const userId = this.tokenService.getUserId();
+        let incoming = (res || []) as any[];
+        // Prefer explicit owner fields if provided by the server (usuarioId or usuario)
+        incoming = incoming.filter(l => {
+          // If server provided a numeric owner id, prefer numeric match
+          if (l.usuarioId != null) {
+            if (userId != null) {
+              return Number(l.usuarioId) === userId;
+            }
+            // token has no numeric id: try matching by provided usuarioNombre
+            if (l.usuarioNombre && username) return String(l.usuarioNombre) === username;
+            return false;
+          }
+
+          // If server provided a nested usuario object, try its fields
+          if (l.usuario) {
+            const u = l.usuario as any;
+            if (u.id != null && userId != null) return Number(u.id) === userId;
+            if (u.nombreUsuario && username) return String(u.nombreUsuario) === username;
+            if (u.username && username) return String(u.username) === username;
+            return false;
+          }
+
+          // If the server provided a top-level usuarioNombre, match by username
+          if (l.usuarioNombre && username) return String(l.usuarioNombre) === username;
+
+          // If server did not include owner info, drop the entry for safety.
+          return false;
+        });
+
+        this.listas = incoming.map((l: any) => ({ id: String(l.id), name: l.nombre || l.name || ('Lista ' + l.id) }));
+        // keep current active list if present, otherwise set from service
+        this.activeListId = this.listaService.getActiveListId() || (this.listas.length ? this.listas[0].id : undefined);
+      },
+      error: (err) => {
+        console.error('Error cargando listas desde API:', err);
+        // fallback to local lists
+        this.listas = this.listaService.getLists().map(l => ({ id: l.id, name: l.name }));
+        this.activeListId = this.listaService.getActiveListId();
+      }
+    });
   }
 
   selectList(id: string | undefined): void {
@@ -36,11 +89,24 @@ export class ListaViewComponent {
   createListPrompt(): void {
     const name = window.prompt('Nombre de la nueva lista:', 'Nueva lista');
     if (name && name.trim().length > 0) {
-      const id = this.listaService.createList(name.trim());
-      this.listaService.setActiveList(id);
-      this.refreshLists();
-      this.refresh();
-      this.notificationService.show(`Lista "${name.trim()}" creada`);
+      // Create via API
+      this.apiListas.crearLista(name.trim()).subscribe({
+        next: (nueva) => {
+          // server should return the created list with id
+          const nuevaId = String(nueva?.id ?? nueva?.Id ?? nueva);
+          const nuevaName = nueva?.nombre || nueva?.name || name.trim();
+          // update local lists and active selection
+          this.listas.push({ id: nuevaId, name: nuevaName });
+          this.listaService.setActiveList(nuevaId);
+          this.activeListId = nuevaId;
+          this.refresh();
+          this.notificationService.show(`Lista "${nuevaName}" creada`);
+        },
+        error: (err) => {
+          console.error('Error creando lista en API:', err);
+          this.notificationService.show('Error al crear la lista');
+        }
+      });
     }
   }
 
@@ -102,5 +168,30 @@ export class ListaViewComponent {
     const nueva = isNaN(n) ? 0 : n;
     this.listaService.updateCantidad(it.producto.id, nueva);
     this.refresh();
+  }
+
+  deleteActiveList(): void {
+    if (!this.activeListId) return;
+    const meta = this.listas.find(l => l.id === this.activeListId);
+    const name = meta ? meta.name : 'lista';
+    const confirmed = window.confirm(`¿Eliminar la lista "${name}"? Esta acción no se puede deshacer.`);
+    if (!confirmed) return;
+
+    // Delete via API and then refresh
+    this.apiListas.eliminarLista(Number(this.activeListId)).subscribe({
+      next: () => {
+        this.notificationService.show(`Lista "${name}" eliminada`);
+        // Optionally remove from local service too
+        if (this.activeListId) {
+          this.listaService.deleteList(this.activeListId);
+        }
+        this.refreshLists();
+        this.refresh();
+      },
+      error: (err) => {
+        console.error('Error eliminando lista en API:', err);
+        this.notificationService.show('Error al eliminar la lista');
+      }
+    });
   }
 }

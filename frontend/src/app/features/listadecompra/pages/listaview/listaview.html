@@ -6,7 +6,10 @@
 				<select class="form-select form-select-sm" style="min-width:180px;max-width:260px" [(ngModel)]="activeListId" (ngModelChange)="selectList($event)">
 					<option *ngFor="let l of listas" [value]="l.id">{{ l.name }}</option>
 				</select>
-				<button class="btn btn-sm btn-outline-secondary ms-1" style="min-width:110px" (click)="createListPrompt()">Nueva lista</button>
+				<div class="btn-group ms-1 lista-actions" role="group" aria-label="Lista actions">
+					<button class="btn btn-sm btn-outline-secondary" style="min-width:110px" (click)="createListPrompt()">Nueva lista</button>
+					<button class="btn btn-sm btn-outline-danger btn-wide" [disabled]="!activeListId" (click)="deleteActiveList()" title="Eliminar lista actual">Borrar lista</button>
+				</div>
 			</div>
 		</div>
 	</div>

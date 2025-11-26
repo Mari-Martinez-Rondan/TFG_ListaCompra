@@ -18,10 +18,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 import java.util.List;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtFilter.class);
     private final JwtUtil jwtUtil;
     private final UsuarioService usuarioService;
 
@@ -44,11 +47,8 @@ public class JwtFilter extends OncePerRequestFilter {
         }
 
         if (token != null && jwtUtil.validateToken(token)) {
-
             String username = jwtUtil.getUsernameFromToken(token);
-
             Usuario usuario = usuarioService.obtenerPorNombreUsuario(username).orElse(null);
-
             if (usuario != null) {
                 UsernamePasswordAuthenticationToken auth =
                         new UsernamePasswordAuthenticationToken(
@@ -59,6 +59,15 @@ public class JwtFilter extends OncePerRequestFilter {
 
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
+                logger.debug("[JwtFilter] Authenticated request for user={}", usuario.getNombreUsuario());
+            } else {
+                logger.debug("[JwtFilter] Token valid but user lookup failed for username={}", username);
+            }
+        } else {
+            if (token == null) {
+                logger.debug("[JwtFilter] No Authorization token provided");
+            } else {
+                logger.debug("[JwtFilter] Token present but invalid");
             }
         }
 

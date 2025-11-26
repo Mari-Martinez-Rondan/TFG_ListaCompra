@@ -25,7 +25,6 @@ export class PerfilComponent implements OnInit {
   cargarPerfil() {
     this.perfilService.obtenerPerfil().subscribe(
       (perfil) => {
-        console.log('Perfil cargado:', perfil);
         this.perfilData = perfil;
       },
       (error) => {

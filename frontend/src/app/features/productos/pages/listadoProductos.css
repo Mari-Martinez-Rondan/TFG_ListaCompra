@@ -2,3 +2,64 @@
   border-radius: 12px;
 }
 .card-body { min-height: 170px; }
+
+.btn-fav {
+  border-radius: 6px;
+  min-width: 38px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.18rem 0.3rem;
+}
+.btn-fav .bi {
+  font-size: 18px;
+  line-height: 1;
+}
+.btn-fav.filled {
+  color: #f1c40f;
+  background: transparent;
+  border-color: transparent;
+}
+
+/* ensure outline secondary gives contrast on light cards */
+.btn-outline-secondary.btn-fav {
+  color: #444;
+}
+
+/* Unicode star icon styling */
+.fav-icon {
+  font-size: 18px;
+  line-height: 1;
+  display: inline-block;
+  color: inherit; /* inherits color from button (.btn-fav or .filled) */
+}
+
+/* Header controls layout for products page */
+.products-controls {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.products-controls .form-control {
+  min-width: 220px;
+}
+
+.products-controls .form-select {
+  min-width: 160px;
+}
+
+.products-controls .btn {
+  white-space: nowrap;
+  min-width: 110px;
+}
+
+@media (max-width: 900px) {
+  .products-controls .form-control,
+  .products-controls .form-select {
+    min-width: 140px;
+  }
+  .products-controls .btn {
+    min-width: 90px;
+  }
+}
