@@ -10,15 +10,15 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const token = tokenService.getToken();
   const router = inject(Router);
 
-  if (token) {
-    // If token is expired, remove it and navigate to login before sending request
+  if (token && token !== 'null' && token !== 'undefined') {
+    //Si el token ha expirado, se elimina y se redirige al login antes de enviar la solicitud
     if (tokenService.isTokenExpired(token)) {
       tokenService.removeToken();
       router.navigate(['/login']);
       return EMPTY; // cancel the outgoing request
     }
 
-    // Attach Authorization header when token present
+    // Adjuntar encabezado de autorización cuando el token está presente
     req = req.clone({
       setHeaders: {
         Authorization: `Bearer ${token}`

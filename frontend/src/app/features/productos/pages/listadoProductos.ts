@@ -9,6 +9,7 @@ import { NotificationService } from '../../../core/services/notification.service
 import { FavoritesService } from '../../../core/services/favorites.service';
 import { ProductoSupermercado } from '../../../core/models/ProductoSupermercado';
 import { RouterModule } from '@angular/router';
+import { ProductoApiService } from '../../../core/services/producto-api.service';
 
 @Component({
   selector: 'app-listado-productos',
@@ -37,7 +38,8 @@ export class ListadoProductosComponent implements OnInit {
               private listaService: ListaService,
               private listaApiService: ListaApiService,
               private notificationService: NotificationService,
-              private favoritesService: FavoritesService) {}
+              private favoritesService: FavoritesService,
+              private productoApi: ProductoApiService) {}
 
   ngOnInit(): void {
     // Cargar ambos supermercados
@@ -49,7 +51,7 @@ export class ListadoProductosComponent implements OnInit {
     }
 
   refreshLists(): void {
-    // Preferir las listas del backend cuando el usuario está autenticado.
+    // Cargar listas desde el servidor si hay sesión iniciada
     if (this.tokenService.isLoggedIn()) {
       this.listaApiService.obtenerMisListas().subscribe({
         next: (res) => {
@@ -71,6 +73,7 @@ export class ListadoProductosComponent implements OnInit {
     this.activeListId = this.listaService.getActiveListId();
   }
 
+  // Crear una nueva lista y refrescar la vista
   createListPrompt(): void {
     const name = window.prompt('Nombre de la nueva lista:', 'Nueva lista');
     if (name && name.trim().length > 0) {
@@ -81,6 +84,7 @@ export class ListadoProductosComponent implements OnInit {
     }
   }
 
+  // Establecer la lista activa y refrescar los elementos mostrados
   selectList(id: string | undefined): void {
     if (!id) return;
     this.listaService.setActiveList(id);
@@ -88,9 +92,10 @@ export class ListadoProductosComponent implements OnInit {
     this.notificationService.show('Lista seleccionada');
   }
 
+  // Cargar todos los productos
   cargarTodos(): void {
     this.cargando = true;
-    // Ensure interceptor will add Authorization header when token exists
+    //Asegurar que el interceptor añadirá el encabezado Authorization cuando exista un token
     this.productosService.getTodos().subscribe({
       next: (res) => {
         this.productos = res || [];
@@ -132,7 +137,7 @@ export class ListadoProductosComponent implements OnInit {
     }
 
     aplicarFiltro(): ProductoSupermercado[] {
-        // Wrapper usado desde la plantilla; soporta filtro por favoritos además.
+        // Aplicar filtros y búsqueda
         let resultado = this.filtrarPorSupermercado();
           if (this.showOnlyFavorites) {
             resultado = resultado.filter(p => this.favoritesService.isFavorite(this.keyFor(p)));
@@ -140,37 +145,74 @@ export class ListadoProductosComponent implements OnInit {
         return resultado;
     }
 
+    // Añadir un producto a la lista activa
     agregarALista(p: ProductoSupermercado): void {
+      const activeListId = this.activeListId;
+      if (!activeListId) {
+        this.notificationService.show('No hay ninguna lista activa. Por favor, crea o selecciona una lista primero.');
+        return;
+      }
+
+      const payload = {
+        idExterno: String(p.id),
+        supermercado: p.supermercado || '',
+        cantidad: 1,
+        nombre: p.nombre
+      };
+
+      //Si el usuario ha iniciado sesión, intentar persistir vía el endpoint de lista del backend
+      if (this.tokenService.isLoggedIn()) {
+        this.productoApi.agregarProductoALista(Number(activeListId), payload).subscribe({
+          next: () => {
+            this.notificationService.show(`Producto "${p.nombre}" añadido a la lista`);
+          },
+          error: (err) => {
+            console.error('Error añadiendo producto a la lista (backend):', err);
+            // Fallback to local storage behavior
+            this.listaService.addProducto(p, 1);
+            this.notificationService.show('Producto añadido localmente (error al guardar en servidor)');
+          }
+        });
+        return;
+      }
+
+      // Fallback: usar listas en localStorage cuando no se ha iniciado sesión
       this.listaService.addProducto(p, 1);
       const activeMeta = this.listas.find(l => l.id === this.listaService.getActiveListId());
       const listName = activeMeta ? activeMeta.name : 'lista actual';
       this.notificationService.show(`Añadido «${p.nombre}» a ${listName}`);
     }
 
+    // Alternar la vista de favoritos
     toggleFavoriteView(): void {
       this.showOnlyFavorites = !this.showOnlyFavorites;
     }
 
+    // Comprobar si un producto está en favoritos
     isFavorite(p: ProductoSupermercado): boolean {
       return this.favoritesService.isFavorite(this.keyFor(p));
     }
 
+    // Alternar favorito de un producto
     toggleFavorite(p: ProductoSupermercado): void {
       const added = this.favoritesService.toggleFavorite(this.keyFor(p));
       this.notificationService.show(added ? `"${p.nombre}" añadido a Favoritos` : `"${p.nombre}" eliminado de Favoritos`);
     }
 
+    // Eliminar un producto de favoritos
     removeFavorite(p: ProductoSupermercado): void {
       this.favoritesService.removeFavorite(this.keyFor(p));
       this.notificationService.show(`"${p.nombre}" eliminado de Favoritos`);
     }
 
+    // Generar una clave única para un producto basada en id y supermercado
     keyFor(p: ProductoSupermercado): string {
       // composite key: id + supermarket helps disambiguate same id across sources
       const sup = (p.supermercado || '').replace(/\s+/g, '_');
       return `${p.id}_${sup}`;
     }
 
+    // Convertir un precio en formato string a número
     precioNumerotico(precio: string): number {
         return parseFloat(precio.replace("€", "").replace(",", ".").trim()) || Infinity;
     }

@@ -26,31 +26,32 @@ export class ListaViewComponent {
     this.refresh();
   }
 
+  // Refrescar la lista de listas disponibles para el usuario autenticado
   refreshLists(): void {
-    // Load lists from the server for the authenticated user
+    // Cargar listas desde el servidor para el usuario autenticado
     this.apiListas.obtenerMisListas().subscribe({
       next: (res) => {
-        // API response received
-        // Expecting an array of lists with { id, nombre } or similar
-        // Apply an extra client-side safety filter: if the server returns user info,
-        // only keep lists that belong to the current authenticated user. This
-        // protects against server misconfiguration returning global lists.
+        //Respuesta de la API recibida
+        // Esperando un array de listas con { id, nombre } o similar
+        // Aplicar un filtro de seguridad adicional del lado del cliente: si el servidor devuelve información del usuario,
+        // solo conservar las listas que pertenecen al usuario autenticado actual. Esto
+        // protege contra una mala configuración del servidor que devuelva listas globales.
         const username = this.tokenService.getUsername();
         const userId = this.tokenService.getUserId();
         let incoming = (res || []) as any[];
-        // Prefer explicit owner fields if provided by the server (usuarioId or usuario)
+        // Preferir campos explícitos de propietario si los proporciona el servidor (usuarioId o usuario)
         incoming = incoming.filter(l => {
-          // If server provided a numeric owner id, prefer numeric match
+          // Si el servidor proporcionó un id numérico de propietario, preferir la coincidencia numérica
           if (l.usuarioId != null) {
             if (userId != null) {
               return Number(l.usuarioId) === userId;
             }
-            // token has no numeric id: try matching by provided usuarioNombre
+            // el token no tiene id numérico: intentar coincidir por usuarioNombre proporcionado
             if (l.usuarioNombre && username) return String(l.usuarioNombre) === username;
             return false;
           }
 
-          // If server provided a nested usuario object, try its fields
+          // Si el servidor proporcionó un objeto usuario anidado, probar sus campos
           if (l.usuario) {
             const u = l.usuario as any;
             if (u.id != null && userId != null) return Number(u.id) === userId;
@@ -59,15 +60,15 @@ export class ListaViewComponent {
             return false;
           }
 
-          // If the server provided a top-level usuarioNombre, match by username
+          // Si el servidor proporcionó un usuarioNombre de nivel superior, coincidir por nombre de usuario
           if (l.usuarioNombre && username) return String(l.usuarioNombre) === username;
 
-          // If server did not include owner info, drop the entry for safety.
+          // Si el servidor no incluyó información del propietario, descartar la entrada por seguridad.
           return false;
         });
 
         this.listas = incoming.map((l: any) => ({ id: String(l.id), name: l.nombre || l.name || ('Lista ' + l.id) }));
-        // keep current active list if present, otherwise set from service
+        // mantener la lista activa actual si está presente, de lo contrario establecer desde el servicio
         this.activeListId = this.listaService.getActiveListId() || (this.listas.length ? this.listas[0].id : undefined);
       },
       error: (err) => {
@@ -79,6 +80,7 @@ export class ListaViewComponent {
     });
   }
 
+  // Establecer la lista activa y refrescar los elementos mostrados
   selectList(id: string | undefined): void {
     if (!id) return;
     this.listaService.setActiveList(id);
@@ -86,6 +88,7 @@ export class ListaViewComponent {
     this.refresh();
   }
 
+  //Crear una nueva lista y refrescar la vista
   createListPrompt(): void {
     const name = window.prompt('Nombre de la nueva lista:', 'Nueva lista');
     if (name && name.trim().length > 0) {
@@ -114,27 +117,25 @@ export class ListaViewComponent {
     this.items = this.listaService.getItems();
   }
 
-  /**
-   * Parse a price string like "1,23 €" or "1.23€" into a number (euros).
-   */
-  precioNumerotico(precio: string): number {
+  
+  //Analiza una cadena de precio y la convierte en número
+     precioNumerotico(precio: string): number {
     if (!precio) return 0;
     const cleaned = precio.replace(/€/g, '').replace(/\s+/g, '').replace(',', '.');
     const n = parseFloat(cleaned);
     return isNaN(n) ? 0 : n;
   }
-
-  /** subtotal for a line item */
+  //Total parcial para un elemento de línea
   itemSubtotal(it: ListaItem): number {
     return this.precioNumerotico(it.producto.precio) * (it.cantidad || 0);
   }
 
-  /** grand total for the list */
+  //Total general para la lista
   grandTotal(): number {
     return this.items.reduce((sum, it) => sum + this.itemSubtotal(it), 0);
   }
 
-  /** format number to euro string (2 decimals, comma decimal separator) */
+  //Formatear número a cadena en euros (2 decimales, coma como separador decimal)
   formatEuro(value: number): string {
     return value === Infinity ? '—' : value.toFixed(2).replace('.', ',') + ' €';
   }
@@ -151,18 +152,21 @@ export class ListaViewComponent {
     this.refresh();
   }
 
+  // Incrementar la cantidad de un elemento de la lista
   increase(it: ListaItem): void {
     const nueva = (it.cantidad || 0) + 1;
     this.listaService.updateCantidad(it.producto.id, nueva);
     this.refresh();
   }
 
+  // Disminuir la cantidad de un elemento de la lista
   decrease(it: ListaItem): void {
     const nueva = (it.cantidad || 0) - 1;
     this.listaService.updateCantidad(it.producto.id, nueva);
     this.refresh();
   }
 
+  // Establecer la cantidad de un elemento de la lista
   setQuantity(it: ListaItem, value: string | number): void {
     const n = typeof value === 'number' ? value : parseInt(String(value), 10);
     const nueva = isNaN(n) ? 0 : n;
@@ -170,6 +174,7 @@ export class ListaViewComponent {
     this.refresh();
   }
 
+  // Eliminar la lista activa después de la confirmación del usuario
   deleteActiveList(): void {
     if (!this.activeListId) return;
     const meta = this.listas.find(l => l.id === this.activeListId);
@@ -177,7 +182,7 @@ export class ListaViewComponent {
     const confirmed = window.confirm(`¿Eliminar la lista "${name}"? Esta acción no se puede deshacer.`);
     if (!confirmed) return;
 
-    // Delete via API and then refresh
+    // Eliminar vía API y luego refrescar
     this.apiListas.eliminarLista(Number(this.activeListId)).subscribe({
       next: () => {
         this.notificationService.show(`Lista "${name}" eliminada`);

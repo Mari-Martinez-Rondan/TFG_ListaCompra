@@ -22,6 +22,7 @@ export class PerfilComponent implements OnInit {
     this.cargarPerfil();
   }
 
+  // Cargar los datos del perfil del usuario
   cargarPerfil() {
     this.perfilService.obtenerPerfil().subscribe(
       (perfil) => {
@@ -33,6 +34,7 @@ export class PerfilComponent implements OnInit {
     );
   }
   
+  // Guardar los cambios realizados en el perfil
   guardarCambios() {
     this.perfilService.actualizarPerfil(this.perfilData).subscribe(
       (response) => {
@@ -45,6 +47,7 @@ export class PerfilComponent implements OnInit {
     );
   }
 
+  // Cambiar la contraseña del usuario
   cambiarContrasena() {
     this.perfilService.cambiarContrasena({ nuevaContrasena: this.nuevaContrasena }).subscribe(
       (response) => {

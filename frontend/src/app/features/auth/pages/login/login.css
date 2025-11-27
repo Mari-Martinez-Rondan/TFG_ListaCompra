@@ -1,21 +1,3 @@
-/*h2 {
-  color: #007bff;
-}
-
-button {
-  font-weight: 500;
-  letter-spacing: 0.5px;
-}
-
-.login-container {
-  max-width: 400px;
-  margin: 50px auto;
-  padding: 20px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  background-color: #ffffff;
-}*/
 .auth-container {
   height: 100vh;
   background: linear-gradient(135deg, #e3f2fd, #f8f9fa);

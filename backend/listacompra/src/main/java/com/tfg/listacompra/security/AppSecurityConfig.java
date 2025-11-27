@@ -33,6 +33,7 @@ public class AppSecurityConfig {
         return http.build();
     }
 
+    //Configuración CORS
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -45,6 +46,7 @@ public class AppSecurityConfig {
         return source;
     }
 
+    //Configuración del codificador de contraseñas
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();

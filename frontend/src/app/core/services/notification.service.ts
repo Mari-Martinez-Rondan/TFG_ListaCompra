@@ -11,23 +11,21 @@ export class NotificationService {
     this.messageSubject.next(message);
   }
 
-  /** Clear the current message and notify subscribers to hide it. */
+  // Método para limpiar el mensaje actual y notificar a los suscriptores para ocultarlo
   clear(): void {
     this.lastMessage = null;
-    // Emit an empty string which components treat as 'no message'
+    // Emitir una cadena vacía que los componentes tratan como 'sin mensaje'
     this.messageSubject.next('');
   }
 
-  /**
-   * Pop a pending message that was emitted before a subscriber existed.
-   * Returns the message (and clears it) or null if none.
-   */
+  // Método para obtener y limpiar el último mensaje
   popMessage(): string | null {
     const m = this.lastMessage;
     this.lastMessage = null;
     return m;
   }
 
+  // Método para obtener el observable de mensajes
   getMessage(): Observable<string> {
     return this.messageSubject.asObservable();
   }

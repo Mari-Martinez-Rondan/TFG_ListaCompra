@@ -37,7 +37,7 @@ export class LoginComponent {
     this.authService.login(this.credentials).subscribe({
       next: () => {
         this.loading = false;
-        // Emitir mensaje de bienvenida usando el nombre de usuario usado en el login
+        // Emitir mensaje de bienvenida con el nombre de usuario usado en el login
         const user = this.credentials.nombreUsuario || '';
         this.notificationService.show('Bienvenido ' + user + '!');
         this.router.navigate(['/lista']);

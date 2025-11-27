@@ -1,6 +1,6 @@
 export const environment = {
 	production: false,
 	apiUrl: 'http://localhost:8080/api',
-	// During development, you can enable mocks to avoid calling the secured backend.
+	// Habilitar el uso de datos simulados (mocks) desde json-server en localhost
 	useMocks: true
 };

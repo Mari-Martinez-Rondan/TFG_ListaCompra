@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+
 
 @RestController
 @RequestMapping("/api/productos")
@@ -34,6 +37,15 @@ public class ProductoController {
         Optional<Producto> producto = productoService.obtenerPorId(id);
         return producto.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    // Agregar producto a una lista
+    @PostMapping("/lista/{listaId}/productos")
+    public ResponseEntity<Producto> agregarProductoALista(@PathVariable Long listaId, @RequestBody Producto producto) {
+        Producto nuevoProducto = productoService.agregarProductoALista(listaId, producto);
+        return ResponseEntity.ok(nuevoProducto);
+
+    }
+    
 
     // Obtener productos por lista
     @GetMapping("/lista/{listaId}")

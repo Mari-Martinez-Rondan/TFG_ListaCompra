@@ -9,16 +9,16 @@ export class TokenService {
   }
 
   getToken(): string | null {
-    return localStorage.getItem(this.key);
+    const t = localStorage.getItem(this.key);
+    if (!t || t === 'null' || t === 'undefined') return null;
+    return t;
   }
 
   removeToken(): void {
     localStorage.removeItem(this.key);
   }
 
-  /**
-   * Decode JWT payload (without verifying) and return object, or null on error
-   */
+  // Codificar la carga útil del JWT (sin verificar) y devolver el objeto, o null en caso de error
   private decodePayload(token: string): any | null {
     try {
       const parts = token.split('.');
@@ -31,24 +31,22 @@ export class TokenService {
     }
   }
 
+  // Comprobar si el token ha expirado
   isTokenExpired(token?: string | null): boolean {
     const t = token ?? this.getToken();
     if (!t) return true;
     const payload = this.decodePayload(t);
-    if (!payload || !payload.exp) return false; // unknown exp -> assume valid
-    // exp is in seconds since epoch
+    if (!payload || !payload.exp) return false;
     const nowSec = Math.floor(Date.now() / 1000);
     return payload.exp <= nowSec;
   }
 
+  // Verificar si el usuario está autenticado (token presente y no expirado)
   isLoggedIn(): boolean {
     const t = this.getToken();
     return t !== null && !this.isTokenExpired(t);
   }
-
-  /**
-   * Return the username (subject) from the stored token, or null if not available.
-   */
+// Método para extraer el nombre de usuario del token
   getUsername(): string | null {
     const t = this.getToken();
     if (!t) return null;
@@ -56,10 +54,7 @@ export class TokenService {
     return payload && payload.sub ? payload.sub : null;
   }
 
-  /**
-   * Try to extract a numeric user id from the token payload.
-   * Returns null if not present or not a number.
-   */
+ // Método para extraer el ID de usuario del token
   getUserId(): number | null {
     const t = this.getToken();
     if (!t) return null;

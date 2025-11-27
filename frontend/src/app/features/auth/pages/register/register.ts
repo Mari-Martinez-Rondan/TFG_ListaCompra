@@ -41,7 +41,6 @@ export class RegisterComponent {
           this.router.navigate(['/login']);
         },
         error: (err) => {
-          // If backend provided a message in the response body, show it.
           const serverMsg = err && err.error ? err.error : null;
           if (serverMsg && typeof serverMsg === 'string') {
             this.errorMessage = `Error al crear la cuenta: ${serverMsg}`;

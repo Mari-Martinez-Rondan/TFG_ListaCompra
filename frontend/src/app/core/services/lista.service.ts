@@ -34,6 +34,7 @@ export class ListaService {
     }
   }
 
+  // Método para refrescar la lista para el usuario actual
   refreshForCurrentUser(): void {
     try {
       const user = this.tokenService.getUsername() ?? 'anon';
@@ -77,11 +78,13 @@ export class ListaService {
     }
   }
 
+  // Método para obtener la clave de índice para el usuario actual
   private getIndexKey(): string {
     const user = this.tokenService.getUsername() ?? 'anon';
     return `${this.indexKeyBase}_${user}`;
   }
 
+  // Método para cargar el índice para el usuario actual
   private loadIndex(): void {
     try {
       const userKey = this.getIndexKey();
@@ -96,16 +99,19 @@ export class ListaService {
     }
   }
 
+  // Método para guardar el índice para el usuario actual
   private saveIndex(): void {
     const userKey = this.getIndexKey();
     localStorage.setItem(userKey, JSON.stringify(this.index));
   }
 
+  // Método para obtener la clave de lista para el usuario actual
   private listKey(id: string): string {
     const user = this.tokenService.getUsername() ?? 'anon';
     return `${this.listPrefix}${id}_${user}`;
   }
 
+  // Método para cargar los elementos de una lista para el usuario actual
   private loadListItems(id: string): ListaItem[] {
     try {
       const raw = localStorage.getItem(this.listKey(id));
@@ -119,6 +125,7 @@ export class ListaService {
     }
   }
 
+  // Método para guardar los elementos de una lista para el usuario actual
   private saveListItems(id: string, items: ListaItem[]): void {
     localStorage.setItem(this.listKey(id), JSON.stringify(items));
     const meta = this.index.lists.find(l => l.id === id);
@@ -128,10 +135,12 @@ export class ListaService {
     }
   }
 
+  // Método para refrescar la lista para el usuario actual
   getLists(): ListaMeta[] {
     return [...this.index.lists];
   }
 
+  // Método para crear una nueva lista para el usuario actual
   createList(name: string): string {
     const id = `l${Date.now()}`;
     const meta: ListaMeta = { id, name, created: Date.now() };
@@ -141,6 +150,7 @@ export class ListaService {
     return id;
   }
 
+  // Método para eliminar una lista para el usuario actual
   deleteList(id: string): void {
     this.index.lists = this.index.lists.filter(l => l.id !== id);
     localStorage.removeItem(this.listKey(id));
@@ -150,6 +160,7 @@ export class ListaService {
     this.saveIndex();
   }
 
+  // Método para renombrar una lista para el usuario actual
   renameList(id: string, name: string): void {
     const meta = this.index.lists.find(l => l.id === id);
     if (meta) {
@@ -159,21 +170,25 @@ export class ListaService {
     }
   }
 
+  // Método para establecer la lista activa para el usuario actual
   setActiveList(id: string | undefined): void {
     this.index.activeId = id;
     this.saveIndex();
   }
 
+  // Método para obtener el ID de la lista activa para el usuario actual
   getActiveListId(): string | undefined {
     return this.index.activeId;
   }
 
+  // Método para obtener los elementos de una lista para el usuario actual
   getItems(listId?: string): ListaItem[] {
     const id = listId ?? this.index.activeId;
     if (!id) return [];
     return this.loadListItems(id);
   }
 
+  // Método para agregar un producto a una lista para el usuario actual
   addProducto(producto: ProductoSupermercado, cantidad = 1, listId?: string): void {
     const id = listId ?? this.index.activeId;
     if (!id) return;
@@ -187,6 +202,7 @@ export class ListaService {
     this.saveListItems(id, items);
   }
 
+  // Método para eliminar un producto de una lista para el usuario actual
   removeProducto(productoId: number, listId?: string): void {
     const id = listId ?? this.index.activeId;
     if (!id) return;
@@ -195,6 +211,7 @@ export class ListaService {
     this.saveListItems(id, items);
   }
 
+  // Método para actualizar la cantidad de un producto en una lista para el usuario actual
   updateCantidad(productoId: number, cantidad: number, listId?: string): void {
     const id = listId ?? this.index.activeId;
     if (!id) return;
@@ -210,17 +227,20 @@ export class ListaService {
     }
   }
 
+  // Método para vaciar una lista para el usuario actual
   clear(listId?: string): void {
     const id = listId ?? this.index.activeId;
     if (!id) return;
     this.saveListItems(id, []);
   }
 
+  // Método para obtener el recuento total de elementos en una lista para el usuario actual
   getTotalCount(listId?: string): number {
     const items = this.getItems(listId);
     return items.reduce((s, i) => s + i.cantidad, 0);
   }
 
+  // Método para migrar la lista antigua de un solo elemento a la nueva estructura de listas múltiples
   private migrateOldSingleList(): void {
     try {
       const raw = localStorage.getItem('lista_compra');

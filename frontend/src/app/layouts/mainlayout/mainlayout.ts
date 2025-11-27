@@ -20,11 +20,10 @@ export class MainLayout {
 
   constructor(private notificationService: NotificationService) {
     this.sub = this.notificationService.getMessage().subscribe((msg) => {
-      // live messages
       this.showMessage(msg);
     });
 
-    // If a message was emitted before this layout was created, pop it and show
+    // Mostrar mensaje pendiente al cargar el layout
     const pending = this.notificationService.popMessage();
     if (pending) {
       this.showMessage(pending);
@@ -32,7 +31,7 @@ export class MainLayout {
   }
 
   private showMessage(msg: string): void {
-    // Treat empty string as no message
+    // Tratar cadena vacía como ningún mensaje
     this.welcomeMessage = msg && msg.length > 0 ? msg : null;
   }
 

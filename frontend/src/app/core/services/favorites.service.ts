@@ -7,12 +7,13 @@ export class FavoritesService {
 
   constructor(private tokenService: TokenService) {}
 
+  // Método para obtener la clave de almacenamiento local para el usuario actual
   private getKey(): string {
     const user = this.tokenService.getUsername() ?? 'anon';
     return `${this.keyBase}_${user}`;
   }
 
-  // Store composite keys (string) to disambiguate products from different supermarkets
+  // Obtiene la lista de favoritos del usuario actual
   getFavorites(): string[] {
     try {
       const raw = localStorage.getItem(this.getKey());
@@ -23,10 +24,12 @@ export class FavoritesService {
     }
   }
 
+  // Método para verificar si está en favoritos
   isFavorite(key: string): boolean {
     return this.getFavorites().includes(key);
   }
 
+  // Método para alternar el estado de favorito
   toggleFavorite(key: string): boolean {
     const favs = this.getFavorites();
     const idx = favs.indexOf(key);
@@ -39,6 +42,7 @@ export class FavoritesService {
     return idx < 0; // true if now added
   }
 
+  // Método para eliminar de favoritos
   removeFavorite(key: string): void {
     const favs = this.getFavorites();
     const idx = favs.indexOf(key);
@@ -48,6 +52,7 @@ export class FavoritesService {
     }
   }
 
+  // Método para eliminar todos los favoritos del usuario actual
   clearFavorites(): void {
     localStorage.removeItem(this.getKey());
   }

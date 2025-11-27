@@ -14,6 +14,7 @@ private apiUrl = `${environment.apiUrl}/productos-supermercados`;
 
   constructor(private http: HttpClient) {}
 
+  // Método para obtener productos de SuperManolo
   getSuperManolo(): Observable<ProductoSupermercado[]> {
     if (environment.useMocks) {
       return this.http.get<ProductoSupermercado[]>('http://localhost:3001/productos');
@@ -21,6 +22,7 @@ private apiUrl = `${environment.apiUrl}/productos-supermercados`;
     return this.http.get<ProductoSupermercado[]>(`${this.apiUrl}/supermanolo`);
   }
 
+  // Método para obtener productos de SuperPepe
   getSuperPepe(): Observable<ProductoSupermercado[]> {
     if (environment.useMocks) {
       return this.http.get<ProductoSupermercado[]>('http://localhost:3000/productos');
@@ -28,6 +30,7 @@ private apiUrl = `${environment.apiUrl}/productos-supermercados`;
     return this.http.get<ProductoSupermercado[]>(`${this.apiUrl}/superpepe`);
   }
 
+  // Método para obtener todos los productos de ambos supermercados
   getTodos(): Observable<ProductoSupermercado[]> {
     // If useMocks is enabled, getSuperManolo/getSuperPepe already point to mocks
     return forkJoin({
@@ -36,7 +39,7 @@ private apiUrl = `${environment.apiUrl}/productos-supermercados`;
     }).pipe(
       map(({ manolo, pepe }) => ([... (manolo ?? []), ... (pepe ?? [])])),
       catchError(err => {
-        // If backend rejects due to auth (403) and mocks were NOT enabled, try local json-server mocks as a fallback
+        // Si el backend rechaza por autenticación (403) y los mocks NO estaban habilitados, intentar mocks locales de json-server como respaldo
         console.warn('getTodos failed against backend', err);
         if (!environment.useMocks && err?.status === 403) {
           const manoloUrl = 'http://localhost:3001/productos';

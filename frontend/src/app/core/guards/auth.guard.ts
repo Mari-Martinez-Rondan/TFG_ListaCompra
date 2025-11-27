@@ -2,19 +2,17 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { TokenService } from '../services/token.service';
 
-/**
- * Functional route guard that redirects unauthenticated users to /login.
- */
+//Guardia de ruta funcional que redirige a los usuarios no autenticados a /login.
 export const authGuard: CanActivateFn = () => {
 	const tokenService = inject(TokenService);
 	const router = inject(Router);
 
-	// Use isLoggedIn() so we reject expired tokens as well
+	// Usuario autenticado
 	if (tokenService.isLoggedIn()) {
 		return true;
 	}
 
-	// Not authenticated — navigate to login and cancel activation
+	// No autenticado — redirigir a login y cancelar la activación
 	router.navigate(['/login']);
 	return false;
 };

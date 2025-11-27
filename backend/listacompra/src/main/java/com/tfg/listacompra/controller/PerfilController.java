@@ -24,6 +24,7 @@ public class PerfilController {
     }
 
     @GetMapping
+    // Obtener el perfil del usuario autenticado
     public ResponseEntity<Usuario> obtenerPerfil(@RequestHeader("Authorization") String authHeader) {
         String token = authHeader.replace("Bearer ", "");
         String nombreUsuario = jwtUtil.getUsernameFromToken(token);
@@ -32,6 +33,7 @@ public class PerfilController {
     }
 
     @PutMapping
+    // Actualizar el perfil del usuario autenticado
     public ResponseEntity<Usuario> actualizarPerfil(
         @RequestHeader("Authorization") String authHeader,
         @RequestBody Usuario usuarioActualizado) {
@@ -56,6 +58,7 @@ public class PerfilController {
         return ResponseEntity.ok(usuarioGuardado);
     }
 
+    // Cambiar la contraseña del usuario autenticado
     @PutMapping("/contrasena")
     public ResponseEntity<String> cambiarContrasena(
         @RequestHeader("Authorization") String authHeader,
