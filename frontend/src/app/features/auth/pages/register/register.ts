@@ -19,7 +19,7 @@ export class RegisterComponent {
 
     constructor(private authService: AuthService, private router: Router) {
       if (this.authService.isAuthenticated()) {
-        this.router.navigate(['/lista']);
+        this.router.navigate(['/inicio']);
       }
     }
 

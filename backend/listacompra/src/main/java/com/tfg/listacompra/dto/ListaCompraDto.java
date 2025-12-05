@@ -7,6 +7,7 @@ public class ListaCompraDto {
     private String nombre;
     private Long usuarioId;
     private String usuarioNombre;
+    private Integer productosCount;
 
     public ListaCompraDto() {}
 
@@ -16,6 +17,11 @@ public class ListaCompraDto {
         if (lista.getUsuario() != null) {
             this.usuarioId = lista.getUsuario().getId();
             this.usuarioNombre = lista.getUsuario().getNombreUsuario();
+        }
+        if (lista.getProductos() != null) {
+            this.productosCount = lista.getProductos().size();
+        } else {
+            this.productosCount = 0;
         }
     }
 
@@ -30,4 +36,7 @@ public class ListaCompraDto {
 
     public String getUsuarioNombre() { return usuarioNombre; }
     public void setUsuarioNombre(String usuarioNombre) { this.usuarioNombre = usuarioNombre; }
+
+    public Integer getProductosCount() { return productosCount; }
+    public void setProductosCount(Integer productosCount) { this.productosCount = productosCount; }
 }

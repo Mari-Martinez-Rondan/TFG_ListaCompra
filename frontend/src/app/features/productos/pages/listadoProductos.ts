@@ -163,12 +163,25 @@ export class ListadoProductosComponent implements OnInit {
       //Si el usuario ha iniciado sesión, intentar persistir vía el endpoint de lista del backend
       if (this.tokenService.isLoggedIn()) {
         this.productoApi.agregarProductoALista(Number(activeListId), payload).subscribe({
-          next: () => {
+          next: (res) => {
+            // Actualizar la vista local de la lista para que la UI refleje la inserción en el backend inmediatamente
+            // Si el backend devuelve el producto creado (con id de BD), almacenar ese id en el producto local
+            try {
+              const created = res as any;
+              if (created && created.id) {
+                const withDb: any = { ...p, __dbId: created.id };
+                this.listaService.addProducto(withDb, 1);
+              } else {
+                this.listaService.addProducto(p, 1);
+              }
+            } catch (e) {
+              this.listaService.addProducto(p, 1);
+            }
             this.notificationService.show(`Producto "${p.nombre}" añadido a la lista`);
           },
           error: (err) => {
             console.error('Error añadiendo producto a la lista (backend):', err);
-            // Fallback to local storage behavior
+            // Comportamiento alternativo: usar local storage
             this.listaService.addProducto(p, 1);
             this.notificationService.show('Producto añadido localmente (error al guardar en servidor)');
           }

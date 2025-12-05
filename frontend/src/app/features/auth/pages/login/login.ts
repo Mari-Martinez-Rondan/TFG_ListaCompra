@@ -21,9 +21,9 @@ export class LoginComponent {
     private router: Router,
     private notificationService: NotificationService
   ) {
-    //Redirige si ya está logueado
+    // Redirige si ya está logueado
     if (this.authService.isAuthenticated()) {
-      this.router.navigate(['/lista']);
+      this.router.navigate(['/inicio']);
     }
   }
 
@@ -40,7 +40,7 @@ export class LoginComponent {
         // Emitir mensaje de bienvenida con el nombre de usuario usado en el login
         const user = this.credentials.nombreUsuario || '';
         this.notificationService.show('Bienvenido ' + user + '!');
-        this.router.navigate(['/lista']);
+        this.router.navigate(['/inicio']);
       },
       error: (err) => {
         this.errorMessage = 'Error de inicio de sesión: ' + err.message;

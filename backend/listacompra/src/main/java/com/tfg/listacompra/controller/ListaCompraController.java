@@ -28,6 +28,9 @@ public class ListaCompraController {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    @Autowired
+    private com.tfg.listacompra.repository.ProductoRepository productoRepository;
 
     // Obtener listas del usuario autenticado
         @GetMapping
@@ -35,7 +38,13 @@ public class ListaCompraController {
             Usuario usuario = usuarioRepository.findByNombreUsuario(authentication.getName()).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
             List<ListaCompra> listas = listaCompraService.listarPorUsuarioId(usuario.getId());
             logger.info("/api/listas requested by user='{}' (id={}), returning {} lists", usuario.getNombreUsuario(), usuario.getId(), listas.size());
-            List<ListaCompraDto> dtos = listas.stream().map(ListaCompraDto::new).toList();
+            List<ListaCompraDto> dtos = listas.stream().map(l -> {
+                ListaCompraDto dto = new ListaCompraDto(l);
+                // compute lightweight product count without initializing collections
+                long c = productoRepository.countByListaCompra(l);
+                dto.setProductosCount((int) c);
+                return dto;
+            }).toList();
             return ResponseEntity.ok(dtos);
         }
 

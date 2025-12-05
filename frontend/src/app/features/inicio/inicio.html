@@ -1,0 +1,38 @@
+<div class="inicio-container">
+
+  <h2 class="titulo">Inicio</h2>
+
+  <!-- Tarjetas de estadísticas -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <h3>{{ totalListas }}</h3>
+      <p>Listas creadas</p>
+    </div>
+
+    <div class="stat-card">
+      <h3>{{ totalProductos }}</h3>
+      <p>Productos totales</p>
+    </div>
+  </div>
+
+  <button class="btn btn-primary crear-btn" (click)="crearListaRapida()">
+    Crear lista rápida
+  </button>
+
+  <!-- Listas recientes -->
+  <div class="recientes">
+    <h3>Listas recientes</h3>
+
+    <div *ngIf="listasRecientes.length === 0" class="sin-listas">
+      No hay listas recientes todavía.
+    </div>
+
+    <ul *ngIf="listasRecientes.length > 0" class="lista-reciente">
+      <li *ngFor="let lista of listasRecientes" (click)="irALista(lista.id)">
+        <strong>{{ lista.nombre }}</strong>
+        <span>{{ lista.productosCount ?? lista.productos?.length ?? 0 }} productos</span>
+      </li>
+    </ul>
+  </div>
+
+</div>

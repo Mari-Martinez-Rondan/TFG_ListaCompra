@@ -5,6 +5,7 @@ import { ListaService, ListaItem } from '../../../../core/services/lista.service
 import { ListaApiService } from '../../../../core/services/lista-api.service';
 import { TokenService } from '../../../../core/services/token.service';
 import { NotificationService } from '../../../../core/services/notification.service';
+import { ProductoApiService } from '../../../../core/services/producto-api.service';
 
 @Component({
   selector: "app-lista-view",
@@ -21,7 +22,8 @@ export class ListaViewComponent {
   constructor(private listaService: ListaService,
               private notificationService: NotificationService,
               private apiListas: ListaApiService,
-              private tokenService: TokenService) {
+              private tokenService: TokenService,
+              private productoApi: ProductoApiService) {
     this.refreshLists();
     this.refresh();
   }
@@ -31,11 +33,9 @@ export class ListaViewComponent {
     // Cargar listas desde el servidor para el usuario autenticado
     this.apiListas.obtenerMisListas().subscribe({
       next: (res) => {
-        //Respuesta de la API recibida
-        // Esperando un array de listas con { id, nombre } o similar
-        // Aplicar un filtro de seguridad adicional del lado del cliente: si el servidor devuelve información del usuario,
-        // solo conservar las listas que pertenecen al usuario autenticado actual. Esto
-        // protege contra una mala configuración del servidor que devuelva listas globales.
+        /*Respuesta de la API recibida. Esperando un array de listas con { id, nombre } o similar. 
+        Aplicar un filtro de seguridad adicional del lado del cliente: si el servidor devuelve información del usuario,
+        solo conservar las listas que pertenecen al usuario autenticado actual.*/
         const username = this.tokenService.getUsername();
         const userId = this.tokenService.getUserId();
         let incoming = (res || []) as any[];
@@ -73,7 +73,7 @@ export class ListaViewComponent {
       },
       error: (err) => {
         console.error('Error cargando listas desde API:', err);
-        // fallback to local lists
+        // Fallback a las listas en localStorage cuando no hay sesión.
         this.listas = this.listaService.getLists().map(l => ({ id: l.id, name: l.name }));
         this.activeListId = this.listaService.getActiveListId();
       }
@@ -95,10 +95,10 @@ export class ListaViewComponent {
       // Create via API
       this.apiListas.crearLista(name.trim()).subscribe({
         next: (nueva) => {
-          // server should return the created list with id
+          // Obtener el ID y nombre de la nueva lista creada
           const nuevaId = String(nueva?.id ?? nueva?.Id ?? nueva);
           const nuevaName = nueva?.nombre || nueva?.name || name.trim();
-          // update local lists and active selection
+          // Actualizar listas locales y selección activa
           this.listas.push({ id: nuevaId, name: nuevaName });
           this.listaService.setActiveList(nuevaId);
           this.activeListId = nuevaId;
@@ -141,6 +141,28 @@ export class ListaViewComponent {
   }
 
   remove(id: number): void {
+    // Buscar el elemento a eliminar para intentar la eliminación del lado del servidor cuando sea posible
+    const items = this.listaService.getItems();
+    const target = items.find(i => i.producto.id === id);
+    const dbId = target ? (target.producto as any).__dbId : undefined;
+    if (this.tokenService.isLoggedIn() && dbId) {
+      this.productoApi.eliminarProducto(Number(dbId)).subscribe({
+        next: () => {
+          this.listaService.removeProducto(id);
+          this.notificationService.show('Producto eliminado de la lista');
+          this.refresh();
+        },
+        error: (err) => {
+          console.error('Error eliminando producto en servidor:', err);
+          // Aún eliminar localmente para mantener la UI responsiva
+          this.listaService.removeProducto(id);
+          this.notificationService.show('Producto eliminado localmente (error servidor)');
+          this.refresh();
+        }
+      });
+      return;
+    }
+
     this.listaService.removeProducto(id);
     this.notificationService.show('Producto eliminado de la lista');
     this.refresh();
@@ -156,6 +178,20 @@ export class ListaViewComponent {
   increase(it: ListaItem): void {
     const nueva = (it.cantidad || 0) + 1;
     this.listaService.updateCantidad(it.producto.id, nueva);
+    // Si está logueado y el ítem tiene un ID en el backend, persistir el cambio en el servidor
+    const dbId = (it.producto as any).__dbId;
+    if (this.tokenService.isLoggedIn() && dbId) {
+      const payload: any = {
+        idExterno: String((it.producto as any).id),
+        supermercado: (it.producto as any).supermercado || '',
+        cantidad: nueva,
+        listaCompra: { id: Number(this.activeListId) }
+      };
+      this.productoApi.actualizarProducto(Number(dbId), payload).subscribe({
+        next: () => {},
+        error: (err) => console.error('Error actualizando cantidad en servidor:', err)
+      });
+    }
     this.refresh();
   }
 
@@ -163,6 +199,20 @@ export class ListaViewComponent {
   decrease(it: ListaItem): void {
     const nueva = (it.cantidad || 0) - 1;
     this.listaService.updateCantidad(it.producto.id, nueva);
+    const dbId = (it.producto as any).__dbId;
+    if (this.tokenService.isLoggedIn() && dbId) {
+      if (nueva <= 0) {
+        this.productoApi.eliminarProducto(Number(dbId)).subscribe({ next: () => {}, error: (err) => console.error('Error eliminando producto en servidor:', err) });
+      } else {
+        const payload: any = {
+          idExterno: String((it.producto as any).id),
+          supermercado: (it.producto as any).supermercado || '',
+          cantidad: nueva,
+          listaCompra: { id: Number(this.activeListId) }
+        };
+        this.productoApi.actualizarProducto(Number(dbId), payload).subscribe({ next: () => {}, error: (err) => console.error('Error actualizando cantidad en servidor:', err) });
+      }
+    }
     this.refresh();
   }
 
@@ -171,6 +221,20 @@ export class ListaViewComponent {
     const n = typeof value === 'number' ? value : parseInt(String(value), 10);
     const nueva = isNaN(n) ? 0 : n;
     this.listaService.updateCantidad(it.producto.id, nueva);
+    const dbId = (it.producto as any).__dbId;
+    if (this.tokenService.isLoggedIn() && dbId) {
+      if (nueva <= 0) {
+        this.productoApi.eliminarProducto(Number(dbId)).subscribe({ next: () => {}, error: (err) => console.error('Error eliminando producto en servidor:', err) });
+      } else {
+        const payload: any = {
+          idExterno: String((it.producto as any).id),
+          supermercado: (it.producto as any).supermercado || '',
+          cantidad: nueva,
+          listaCompra: { id: Number(this.activeListId) }
+        };
+        this.productoApi.actualizarProducto(Number(dbId), payload).subscribe({ next: () => {}, error: (err) => console.error('Error actualizando cantidad en servidor:', err) });
+      }
+    }
     this.refresh();
   }
 

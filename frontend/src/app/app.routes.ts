@@ -5,8 +5,9 @@ import { authGuard } from './core/guards/auth.guard';
 // Páginas principales
 import { PerfilComponent } from './features/usuarios/pages/perfil/perfil';
 import { listaDeCompraPages } from './features/listadecompra/listadecompra';
+import { InicioComponent } from './features/inicio/inicio';
 
-// Nuevas páginas de productos
+// Páginas de productos
 import { ListadoProductosComponent } from './features/productos/pages/listadoProductos';
 import { ComparadorComponent } from './features/productos/pages/comparador/comparador';
 import { FavoritosComponent } from './features/productos/pages/favoritos';
@@ -31,8 +32,10 @@ export const routes: Routes = [
     component: MainLayout,
     canActivate: [authGuard],
     children: [
-      // Ruta por defecto dentro del layout: redirige a la lista de compra
-      { path: '', pathMatch: 'full', redirectTo: 'lista' },
+      // Ruta por defecto dentro del layout: redirige a inicio
+      { path: '', pathMatch: 'full', redirectTo: 'inicio' },
+      { path: 'inicio', loadComponent: () => import('./features/inicio/inicio').then(m => m.InicioComponent) },
+      
       ...listaDeCompraPages,
 
       { path: 'perfil', component: PerfilComponent },
