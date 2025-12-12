@@ -1,5 +1,5 @@
 export const environment = {
 	production: true,
-	apiUrl: 'https://api.example.com/api', // URL de producción real
+	apiUrl: 'https://spring-boot-production-0267.up.railway.app/api',
 	useMocks: false
 };
