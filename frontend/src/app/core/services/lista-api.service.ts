@@ -1,12 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ListaApiService {
-  private apiUrl = 'http://localhost:8080/api/listas';
+  private apiUrl = `${environment.apiUrl}/listas`;
     constructor(private http: HttpClient) {}
 
     // Obtener listas del usuario autenticado
