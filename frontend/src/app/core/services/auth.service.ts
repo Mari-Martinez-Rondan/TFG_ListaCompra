@@ -3,7 +3,7 @@ import { ApiService } from "./api.service";
 import { Observable, tap } from "rxjs";
 import { TokenService } from "./token.service";
 import { ListaService } from './lista.service';
-import { environment } from '../../environments/environment';
+import { environment } from '../../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
