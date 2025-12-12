@@ -1,5 +1,5 @@
 export const environment = {
 	production: true,
-	apiUrl: 'https://spring-boot-production-0267.up.railway.app/api',
+	apiUrl: 'https://tfglistacompra-production-4550.up.railway.app/api',
 	useMocks: false
 };
