@@ -18,7 +18,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/listas")
-@CrossOrigin(origins = "http://localhost:4200")
+@CrossOrigin(origins = {"http://localhost:4200", "https://angular-production-371c.up.railway.app"})
 public class ListaCompraController {
 
     private static final Logger logger = LoggerFactory.getLogger(ListaCompraController.class);

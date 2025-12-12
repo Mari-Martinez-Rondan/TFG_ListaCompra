@@ -11,7 +11,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/usuarios")
-@CrossOrigin(origins = "http://localhost:4200") // Permite conexión con Angular
+@CrossOrigin(origins = {"http://localhost:4200", "https://angular-production-371c.up.railway.app"})
 public class UsuarioController {
 
     @Autowired
