@@ -5,7 +5,6 @@ import com.tfg.listacompra.dto.ListaCompraDto;
 import com.tfg.listacompra.model.Usuario;
 import com.tfg.listacompra.repository.UsuarioRepository;
 import com.tfg.listacompra.service.ListaCompraService;
-import com.tfg.listacompra.service.UsuarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.slf4j.Logger;
@@ -18,7 +17,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/listas")
-@CrossOrigin(origins = {"http://localhost:4200", "https://tfglistacompra-production-4550.up.railway.app"})
+
 public class ListaCompraController {
 
     private static final Logger logger = LoggerFactory.getLogger(ListaCompraController.class);
