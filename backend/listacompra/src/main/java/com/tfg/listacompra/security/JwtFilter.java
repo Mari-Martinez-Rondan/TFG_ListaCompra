@@ -35,9 +35,9 @@ public class JwtFilter extends OncePerRequestFilter {
                                     FilterChain filterChain)
             throws ServletException, IOException {
 
-        // Ignorar solicitudes OPTIONS (preflight)
+        
         if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            filterChain.doFilter(request, response);
+            response.setStatus(HttpServletResponse.SC_OK);
             return;
         }
 
@@ -58,17 +58,10 @@ public class JwtFilter extends OncePerRequestFilter {
                                 null,
                                 List.of(new SimpleGrantedAuthority("ROLE_USER"))
                         );
+
                 auth.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 logger.debug("[JwtFilter] Authenticated request for user={}", usuario.getNombreUsuario());
-            } else {
-                logger.debug("[JwtFilter] Token valid but user lookup failed for username={}", username);
-            }
-        } else {
-            if (token == null) {
-                logger.debug("[JwtFilter] No Authorization token provided");
-            } else {
-                logger.debug("[JwtFilter] Token present but invalid");
             }
         }
 
