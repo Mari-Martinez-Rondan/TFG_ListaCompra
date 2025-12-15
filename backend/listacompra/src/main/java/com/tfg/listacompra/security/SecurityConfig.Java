@@ -71,6 +71,7 @@ public class SecurityConfig {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowedOriginPatterns(Arrays.asList(
                 "http://localhost:4200",
+                "https://tfg-lista-compra.vercel.app",
                 "https://*.vercel.app"   // permite todos los subdominios de Vercel
         ));
         configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","DELETE","OPTIONS"));
