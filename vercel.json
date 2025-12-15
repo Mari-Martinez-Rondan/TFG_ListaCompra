@@ -2,7 +2,7 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/tfg-listacompra/index.html",
+      "src": "dist/tfg-listacompra/**",
       "use": "@vercel/static"
     }
   ],
