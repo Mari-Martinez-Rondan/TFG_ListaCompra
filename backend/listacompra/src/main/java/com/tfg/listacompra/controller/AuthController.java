@@ -42,8 +42,13 @@ public class AuthController {
         usuario.setEmail(registerRequest.getEmail());
         usuario.setContrasena(passwordEncoder.encode(registerRequest.getContrasena()));
 
-        Usuario saved = usuarioService.guardar(usuario);
-        return ResponseEntity.ok("Usuario registrado con ID: " + saved.getId());
+        try {
+            Usuario saved = usuarioService.guardar(usuario);
+            return ResponseEntity.ok("Usuario registrado con ID: " + saved.getId());}
+        catch (Exception e) {
+            e.printStackTrace(); // log completo
+            return ResponseEntity.status(500).body("Error guardando usuario: " + e.getMessage());
+        }
     }
 
         @PostMapping("/login")
