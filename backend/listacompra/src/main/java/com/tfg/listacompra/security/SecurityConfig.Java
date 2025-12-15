@@ -4,6 +4,7 @@ import com.tfg.listacompra.service.UsuarioService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -41,8 +42,9 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll() // permitir preflight CORS
                 .requestMatchers("/api/auth/**").permitAll()   // endpoints públicos
-                .requestMatchers("/api/productos-supermercado/**").permitAll()
+                .requestMatchers("/api/productos-supermercados/**").permitAll()
                 .anyRequest().authenticated()
             )
             // Devuelve 401 en lugar de redirigir al login
