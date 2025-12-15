@@ -18,7 +18,7 @@ export class ApiService {
   // Método para solicitud POST
   postData(path: string, data: any, options?: any): Observable<any> {
     // options puede incluir headers, params, etc.
-    return this.http.post(`${this.apiUrl}${path}`, data, {responseType: 'text' as 'json'});
+    return this.http.post(`${this.apiUrl}${path}`, data, { ...options });
   }
 
   // Método para solicitud PUT

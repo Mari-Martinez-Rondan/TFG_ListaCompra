@@ -35,18 +35,19 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+
         http
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            // Stateless: no sesiones
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            // Endpoints públicos
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()   // endpoints públicos
+                .requestMatchers("/api/productos-supermercado/**").permitAll()
                 .anyRequest().authenticated()
             )
-            // Evitar redirección a login
+            // Devuelve 401 en lugar de redirigir al login
             .exceptionHandling(ex -> ex.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
+            // Deshabilita formularios de login y basic auth
             .formLogin(form -> form.disable())
             .httpBasic(basic -> basic.disable());
 
@@ -63,13 +64,19 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Permitir Angular desde localhost y producción
-        configuration.setAllowedOriginPatterns(Arrays.asList("http://localhost:4200", "https://*.up.railway.app"));
+
+        configuration.setAllowedOriginPatterns(Arrays.asList(
+                "http://localhost:4200",
+                "https://*.up.railway.app"
+        ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setAllowCredentials(false); // ¡no cookies!
+        configuration.setAllowCredentials(false);  // importante: false para evitar problemas con Railway y HTTPS
+        configuration.setExposedHeaders(Arrays.asList("Authorization", "Content-Type"));
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
+
         return source;
     }
 }
